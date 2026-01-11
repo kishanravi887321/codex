@@ -117,12 +117,12 @@ function extractDataFromPage() {
   // Remove duplicates
   data.topics = [...new Set(topics)];
 
-  // Check if problem is solved
-  const allDivs = document.querySelectorAll('div');
-  for (let i = 0; i < allDivs.length; i++) {
-    if (allDivs[i].innerText.trim() === 'Solved') {
+  // Check if problem is solved (optimized)
+  const titleArea = document.querySelector('div.text-title-large');
+  if (titleArea && titleArea.parentElement) {
+    const nearbyText = titleArea.parentElement.textContent;
+    if (nearbyText && nearbyText.indexOf('Solved') !== -1) {
       data.solved = true;
-      break;
     }
   }
 

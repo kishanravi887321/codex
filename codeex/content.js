@@ -48,13 +48,22 @@
     }
     data.topics = topics;
 
-    // Check if problem is solved
-    var allDivs = document.querySelectorAll('div');
-    for (var j = 0; j < allDivs.length; j++) {
-      var divText = allDivs[j].innerText.trim();
-      if (divText === 'Solved') {
+    // Check if problem is solved (optimized - look for specific text near title)
+    var solvedCheck = document.querySelector('div[class*="text-"]');
+    if (solvedCheck) {
+      var parent = solvedCheck.parentElement;
+      if (parent && parent.textContent.indexOf('Solved') !== -1) {
         data.solved = true;
-        break;
+      }
+    }
+    // Fallback: check for green checkmark SVG near title
+    if (!data.solved) {
+      var titleArea = document.querySelector('div.text-title-large');
+      if (titleArea && titleArea.parentElement) {
+        var nearbyText = titleArea.parentElement.textContent;
+        if (nearbyText && nearbyText.indexOf('Solved') !== -1) {
+          data.solved = true;
+        }
       }
     }
 
@@ -269,23 +278,14 @@
   // Initialize
   console.log('[Codex] Setting up initialization...');
   
-  // Try immediately
-  setTimeout(function() {
-    console.log('[Codex] First attempt to create icon...');
-    createFloatingIcon();
-  }, 500);
-  
-  // Retry after page fully loads
-  setTimeout(function() {
-    console.log('[Codex] Second attempt to create icon...');
-    createFloatingIcon();
-  }, 2000);
+  // Create icon once when page is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(createFloatingIcon, 800);
+    });
+  } else {
+    setTimeout(createFloatingIcon, 800);
+  }
 
-  // Also try on window load
-  window.addEventListener('load', function() {
-    console.log('[Codex] Window loaded, creating icon...');
-    setTimeout(createFloatingIcon, 500);
-  });
-
-  console.log('[Codex] Content script setup complete');
+  console.log('[Codex] Content script loaded');
 })();
