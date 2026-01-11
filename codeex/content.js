@@ -12,7 +12,8 @@
       number: null,
       name: null,
       url: null,
-      topics: []
+      topics: [],
+      solved: false
     };
 
     // Extract question info using scoped selector (future-proof)
@@ -47,6 +48,16 @@
     }
     data.topics = topics;
 
+    // Check if problem is solved
+    var allDivs = document.querySelectorAll('div');
+    for (var j = 0; j < allDivs.length; j++) {
+      var divText = allDivs[j].innerText.trim();
+      if (divText === 'Solved') {
+        data.solved = true;
+        break;
+      }
+    }
+
     return data;
   }
 
@@ -73,9 +84,10 @@
     html += '<div style="padding: 14px 16px;">';
     
     if (data.name) {
+      var solvedBadge = data.solved ? '<span style="font-size: 11px; font-weight: 600; color: #10b981; background: #d1fae5; padding: 3px 8px; border-radius: 4px; border: 1px solid #6ee7b7; margin-left: 6px;">✓ Solved</span>' : '';
       html += '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">' +
         '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">' +
-        '<span style="font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 3px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">#' + (data.number || '?') + '</span>' +
+        '<div style="display: flex; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 3px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">#' + (data.number || '?') + '</span>' + solvedBadge + '</div>' +
         '<a href="' + data.url + '" target="_blank" style="color: #64748b; text-decoration: none;">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13V19C18 20.1 17.1 21 16 21H5C3.9 21 3 20.1 3 19V8C3 6.9 3.9 6 5 6H11"/><path d="M15 3H21V9"/><path d="M10 14L21 3"/></svg></a></div>' +
         '<h3 style="margin: 0; font-size: 15px; font-weight: 600; color: #1e293b;">' + data.name + '</h3></div>';

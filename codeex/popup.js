@@ -80,7 +80,8 @@ function extractDataFromPage() {
     number: null,
     name: null,
     url: null,
-    topics: []
+    topics: [],
+    solved: false
   };
 
   // Extract question info using scoped selector (future-proof)
@@ -116,6 +117,15 @@ function extractDataFromPage() {
   // Remove duplicates
   data.topics = [...new Set(topics)];
 
+  // Check if problem is solved
+  const allDivs = document.querySelectorAll('div');
+  for (let i = 0; i < allDivs.length; i++) {
+    if (allDivs[i].innerText.trim() === 'Solved') {
+      data.solved = true;
+      break;
+    }
+  }
+
   return data;
 }
 
@@ -131,6 +141,12 @@ function displayProblemData(data) {
     questionName.textContent = data.name;
     questionLink.href = data.url || '#';
     questionLink.title = data.url || '';
+    
+    // Show/hide solved badge
+    const solvedBadge = document.getElementById('solved-badge');
+    if (solvedBadge) {
+      solvedBadge.style.display = data.solved ? 'inline-flex' : 'none';
+    }
   } else {
     questionCard.style.display = 'none';
   }
