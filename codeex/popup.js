@@ -83,21 +83,25 @@ function extractDataFromPage() {
     topics: []
   };
 
-  // Extract question info using semantic selector (future-proof)
-  const questionAnchor = document.querySelector('a[href^="/problems/"]');
+  // Extract question info using scoped selector (future-proof)
+  // div.text-title-large is the semantic container for the problem header
+  const titleAnchor = document.querySelector(
+    'div.text-title-large a[href^="/problems/"]'
+  );
   
-  if (questionAnchor) {
-    const fullText = questionAnchor.innerText.trim();
-    const href = questionAnchor.getAttribute('href');
+  if (titleAnchor) {
+    const fullText = titleAnchor.innerText.trim();
+    const href = titleAnchor.getAttribute('href');
     
     // Build full URL
     data.url = 'https://leetcode.com' + href;
     
-    // Parse question number and name (format: "85. Maximal Rectangle")
-    if (fullText.includes('.')) {
-      const [number, ...nameParts] = fullText.split('.');
-      data.number = number.trim();
-      data.name = nameParts.join('.').trim();
+    // Parse question number and name using regex (format: "85. Maximal Rectangle")
+    const match = fullText.match(/^(\d+)\.\s+(.*)$/);
+    
+    if (match) {
+      data.number = match[1];
+      data.name = match[2];
     } else {
       data.name = fullText;
     }
