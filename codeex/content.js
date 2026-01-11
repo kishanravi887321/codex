@@ -276,12 +276,28 @@
 
   // Initialize floating icon when page loads
   function init() {
+    // Try multiple times to ensure it works with React's dynamic loading
+    function tryCreate() {
+      if (!document.body) {
+        setTimeout(tryCreate, 100);
+        return;
+      }
+      createFloatingIcon();
+      console.log('[Codex] Floating icon created');
+    }
+
     // Wait for page to be ready
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', createFloatingIcon);
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(tryCreate, 500);
+      });
     } else {
-      createFloatingIcon();
+      setTimeout(tryCreate, 500);
     }
+
+    // Also try again after a longer delay for React hydration
+    setTimeout(tryCreate, 1500);
+    setTimeout(tryCreate, 3000);
   }
 
   init();
