@@ -117,14 +117,10 @@ function extractDataFromPage() {
   // Remove duplicates
   data.topics = [...new Set(topics)];
 
-  // Check if problem is solved (optimized)
-  const titleArea = document.querySelector('div.text-title-large');
-  if (titleArea && titleArea.parentElement) {
-    const nearbyText = titleArea.parentElement.textContent;
-    if (nearbyText && nearbyText.indexOf('Solved') !== -1) {
-      data.solved = true;
-    }
-  }
+  // Check if problem is solved - search for div with exact "Solved" text
+  const isSolved = [...document.querySelectorAll('div')]
+    .some(el => el.innerText.trim() === 'Solved');
+  data.solved = isSolved;
 
   return data;
 }
