@@ -8,7 +8,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: #ffffff;
   color: #1e293b;
-  width: 320px;
+  width: 340px;
   min-height: 200px;
 }
 
@@ -20,7 +20,7 @@ body {
 
 /* Header */
 .header {
-  padding: 16px;
+  padding: 14px 16px;
   border-bottom: 1px solid #e2e8f0;
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
 }
@@ -48,17 +48,66 @@ body {
   padding: 16px;
 }
 
+/* Question Card */
+.question-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.question-number {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563eb;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #bfdbfe;
+}
+
+.question-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: #64748b;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.question-link:hover {
+  background-color: #e2e8f0;
+  color: #2563eb;
+}
+
+.question-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+/* Section Title */
 .section-title {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 12px;
-}
-
-.topics-container {
-  min-height: 80px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 
 /* Topics List */
@@ -89,6 +138,22 @@ body {
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
 }
 
+/* Topic count badge */
+.topic-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background-color: #2563eb;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-left: 6px;
+}
+
 /* Loading State */
 .loading {
   display: flex;
@@ -96,7 +161,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 24px;
+  padding: 32px;
   color: #64748b;
 }
 
@@ -122,7 +187,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 24px;
+  padding: 32px;
   text-align: center;
 }
 
@@ -144,7 +209,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 24px;
+  padding: 32px;
   text-align: center;
 }
 
@@ -161,21 +226,30 @@ body {
   background-color: #f8fafc;
 }
 
-.refresh-btn {
+.footer-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.refresh-btn,
+.copy-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 100%;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  flex: 1;
+  padding: 10px 14px;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  color: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.refresh-btn {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
 }
 
 .refresh-btn:hover {
@@ -183,7 +257,26 @@ body {
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-.refresh-btn:active {
+.copy-btn {
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.copy-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.copy-btn.copied {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.refresh-btn:active,
+.copy-btn:active {
   transform: scale(0.98);
 }
 
@@ -198,20 +291,4 @@ body {
 /* Hidden utility */
 .hidden {
   display: none !important;
-}
-
-/* Topic count badge */
-.topic-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  background-color: #2563eb;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #ffffff;
-  margin-left: 8px;
 }

@@ -1,27 +1,55 @@
 // Content script for Codex - Problem Topic Extractor
-// This script runs on LeetCode pages to extract problem topics
+// This script runs on LeetCode pages to extract problem data and topics
 
 (function() {
   'use strict';
 
-  // Extract topics from the page using semantic selectors
-  function extractTopics() {
-    // Use semantic selector - finds all links that start with /tag/
-    // This is future-proof as it doesn't rely on CSS class names
+  // Extract complete problem data from the page using semantic selectors
+  function extractProblemData() {
+    const data = {
+      number: null,
+      name: null,
+      url: null,
+      topics: []
+    };
+
+    // Extract question info using semantic selector (future-proof)
+    const questionAnchor = document.querySelector('a[href^="/problems/"]');
+    
+    if (questionAnchor) {
+      const fullText = questionAnchor.innerText.trim();
+      const href = questionAnchor.getAttribute('href');
+      
+      // Build full URL
+      data.url = 'https://leetcode.com' + href;
+      
+      // Parse question number and name (format: "85. Maximal Rectangle")
+      if (fullText.includes('.')) {
+        const [number, ...nameParts] = fullText.split('.');
+        data.number = number.trim();
+        data.name = nameParts.join('.').trim();
+      } else {
+        data.name = fullText;
+      }
+    }
+
+    // Extract topics using semantic selector (future-proof)
     const topicElements = document.querySelectorAll('a[href^="/tag/"]');
     const topics = Array.from(topicElements)
       .map(el => el.innerText.trim())
       .filter(topic => topic.length > 0);
     
-    // Remove duplicates and return
-    return [...new Set(topics)];
+    // Remove duplicates
+    data.topics = [...new Set(topics)];
+
+    return data;
   }
 
   // Listen for messages from the popup
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'extractTopics') {
-      const topics = extractTopics();
-      sendResponse({ topics: topics });
+    if (request.action === 'extractProblemData') {
+      const data = extractProblemData();
+      sendResponse(data);
     }
     return true; // Keep the message channel open for async response
   });
