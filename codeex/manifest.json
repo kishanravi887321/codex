@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Codex - Problem Topic Extractor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Extract problem topics from coding platforms like LeetCode",
   "permissions": [
     "activeTab",
@@ -27,7 +27,14 @@
         "*://www.leetcode.com/*",
         "*://leetcode.cn/*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "modules/namespace.js",
+        "modules/extractor.js",
+        "modules/styles.js",
+        "modules/panel.js",
+        "modules/icon.js",
+        "modules/main.js"
+      ],
       "run_at": "document_end",
       "all_frames": false
     }
