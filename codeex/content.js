@@ -120,13 +120,235 @@
     if (document.getElementById('codex-floating-icon')) return;
     if (!document.body) return;
 
+    // Inject keyframe animation for blinking eye
+    if (!document.getElementById('codex-eye-styles')) {
+      var styleSheet = document.createElement('style');
+      styleSheet.id = 'codex-eye-styles';
+      styleSheet.textContent = `
+        @keyframes codex-blink {
+          0%, 85%, 100% { transform: scaleY(1); }
+          90% { transform: scaleY(0.05); }
+        }
+        @keyframes codex-pupil-move {
+          0%, 100% { transform: translate(0, 0); }
+          20% { transform: translate(2px, -1px); }
+          40% { transform: translate(-2px, 1px); }
+          60% { transform: translate(1px, 2px); }
+          80% { transform: translate(-1px, -2px); }
+        }
+        @keyframes codex-color-cycle {
+          0%, 100% { 
+            --iris-color-1: #3b82f6;
+            --iris-color-2: #2563eb;
+            --iris-color-3: #1d4ed8;
+          }
+          25% { 
+            --iris-color-1: #8b5cf6;
+            --iris-color-2: #7c3aed;
+            --iris-color-3: #6d28d9;
+          }
+          50% { 
+            --iris-color-1: #ec4899;
+            --iris-color-2: #db2777;
+            --iris-color-3: #be185d;
+          }
+          75% { 
+            --iris-color-1: #10b981;
+            --iris-color-2: #059669;
+            --iris-color-3: #047857;
+          }
+        }
+        @keyframes codex-iris-rotate {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes codex-glow-pulse {
+          0%, 100% { 
+            filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
+            transform: scale(1);
+          }
+          50% { 
+            filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.9));
+            transform: scale(1.02);
+          }
+        }
+        @keyframes codex-scan-line {
+          0% { transform: translateY(-10px); opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { transform: translateY(10px); opacity: 0; }
+        }
+        @keyframes codex-ring-expand {
+          0% { transform: scale(0.8); opacity: 0.8; }
+          100% { transform: scale(2); opacity: 0; }
+        }
+        @keyframes codex-border-glow {
+          0%, 100% { border-color: rgba(59, 130, 246, 0.6); box-shadow: 0 4px 25px rgba(59, 130, 246, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.1); }
+          25% { border-color: rgba(139, 92, 246, 0.6); box-shadow: 0 4px 25px rgba(139, 92, 246, 0.5), inset 0 0 20px rgba(139, 92, 246, 0.1); }
+          50% { border-color: rgba(236, 72, 153, 0.6); box-shadow: 0 4px 25px rgba(236, 72, 153, 0.5), inset 0 0 20px rgba(236, 72, 153, 0.1); }
+          75% { border-color: rgba(16, 185, 129, 0.6); box-shadow: 0 4px 25px rgba(16, 185, 129, 0.5), inset 0 0 20px rgba(16, 185, 129, 0.1); }
+        }
+        @keyframes codex-particle-float {
+          0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+          50% { transform: translateY(-3px) rotate(180deg); opacity: 1; }
+        }
+        @keyframes codex-hover-spin {
+          0% { transform: rotate(0deg) scale(1); }
+          25% { transform: rotate(90deg) scale(1.1); }
+          50% { transform: rotate(180deg) scale(1); }
+          75% { transform: rotate(270deg) scale(1.1); }
+          100% { transform: rotate(360deg) scale(1); }
+        }
+        @keyframes codex-hover-pulse-ring {
+          0% { transform: scale(1); opacity: 0.5; stroke-width: 2; }
+          50% { transform: scale(1.3); opacity: 0; stroke-width: 0; }
+          100% { transform: scale(1); opacity: 0.5; stroke-width: 2; }
+        }
+        @keyframes codex-electric-arc {
+          0%, 100% { opacity: 0; d: path('M12 24 Q18 20, 24 24 Q30 28, 36 24'); }
+          25% { opacity: 1; d: path('M12 24 Q18 28, 24 24 Q30 20, 36 24'); }
+          50% { opacity: 0.5; d: path('M12 24 Q18 22, 24 26 Q30 22, 36 24'); }
+          75% { opacity: 1; d: path('M12 24 Q18 26, 24 22 Q30 26, 36 24'); }
+        }
+        #codex-floating-icon {
+          animation: codex-border-glow 8s ease-in-out infinite;
+        }
+        #codex-floating-icon .codex-eye-group {
+          animation: codex-glow-pulse 3s ease-in-out infinite;
+        }
+        #codex-floating-icon .codex-iris-pattern {
+          animation: codex-iris-rotate 20s linear infinite;
+        }
+        #codex-floating-icon:hover {
+          animation: none !important;
+          border-color: rgba(255, 255, 255, 0.9) !important;
+          box-shadow: 0 0 40px rgba(139, 92, 246, 0.8), 0 0 60px rgba(236, 72, 153, 0.4), inset 0 0 30px rgba(59, 130, 246, 0.3) !important;
+        }
+        #codex-floating-icon:hover .codex-eye-group {
+          animation: codex-hover-spin 2s ease-in-out infinite;
+        }
+        #codex-floating-icon:hover .codex-scan-line {
+          animation: codex-scan-line 0.8s ease-in-out infinite;
+        }
+        #codex-floating-icon:hover .codex-pulse-ring {
+          animation: codex-hover-pulse-ring 1s ease-out infinite;
+        }
+        #codex-floating-icon:hover .codex-particle {
+          animation: codex-particle-float 1.5s ease-in-out infinite;
+        }
+        #codex-floating-icon:hover .codex-electric {
+          animation: codex-electric-arc 0.3s linear infinite;
+        }
+        #codex-floating-icon:hover .codex-iris-main {
+          fill: url(#codex-iris-gradient-hover);
+        }
+      `;
+      document.head.appendChild(styleSheet);
+    }
+
     // Create icon
     var icon = document.createElement('div');
     icon.id = 'codex-floating-icon';
-    icon.innerHTML = '<svg width="26" height="26" viewBox="0 0 48 48" fill="none"><path d="M24 10L10 17L24 24L38 17L24 10Z" fill="white" opacity="0.95"/><path d="M10 24L24 31L38 24" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M10 31L24 38L38 31" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>';
+    
+    // Ultra advanced animated eye SVG with color cycling and effects
+    icon.innerHTML = `
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group">
+        <!-- Pulse rings (visible on hover) -->
+        <circle class="codex-pulse-ring" cx="24" cy="24" r="20" fill="none" stroke="rgba(139, 92, 246, 0.5)" stroke-width="1" style="transform-origin: center;"/>
+        <circle class="codex-pulse-ring" cx="24" cy="24" r="22" fill="none" stroke="rgba(236, 72, 153, 0.3)" stroke-width="1" style="transform-origin: center; animation-delay: 0.3s;"/>
+        
+        <!-- Outer eye shape with blink -->
+        <g class="codex-eyelid" style="transform-origin: center; animation: codex-blink 4s ease-in-out infinite;">
+          <!-- Outer glow -->
+          <ellipse cx="24" cy="24" rx="18" ry="11" fill="none" stroke="rgba(147, 197, 253, 0.2)" stroke-width="6"/>
+          <!-- Main eye outline -->
+          <ellipse cx="24" cy="24" rx="18" ry="11" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <!-- Inner eye fill -->
+          <ellipse cx="24" cy="24" rx="16" ry="9" fill="rgba(15, 23, 42, 0.8)"/>
+        </g>
+        
+        <!-- Iris group with rotation -->
+        <g class="codex-eyelid" style="transform-origin: center; animation: codex-blink 4s ease-in-out infinite;">
+          <!-- Iris pattern that rotates -->
+          <g class="codex-iris-pattern" style="transform-origin: 24px 24px;">
+            <!-- Iris segments -->
+            <circle cx="24" cy="24" r="9" fill="url(#codex-iris-gradient-animated)"/>
+            <!-- Iris detail lines -->
+            <g stroke="rgba(255,255,255,0.15)" stroke-width="0.5">
+              <line x1="24" y1="15" x2="24" y2="19"/>
+              <line x1="24" y1="29" x2="24" y2="33"/>
+              <line x1="15" y1="24" x2="19" y2="24"/>
+              <line x1="29" y1="24" x2="33" y2="24"/>
+              <line x1="17.5" y1="17.5" x2="20" y2="20"/>
+              <line x1="28" y1="28" x2="30.5" y2="30.5"/>
+              <line x1="30.5" y1="17.5" x2="28" y2="20"/>
+              <line x1="20" y1="28" x2="17.5" y2="30.5"/>
+            </g>
+            <!-- Inner ring -->
+            <circle cx="24" cy="24" r="6" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+          </g>
+          
+          <!-- Pupil with movement -->
+          <g style="transform-origin: 24px 24px; animation: codex-pupil-move 2.5s ease-in-out infinite;">
+            <circle cx="24" cy="24" r="4" fill="#0a0a0a"/>
+            <!-- Pupil highlights -->
+            <circle cx="22" cy="22" r="1.8" fill="white" opacity="0.95"/>
+            <circle cx="26.5" cy="25.5" r="1" fill="white" opacity="0.6"/>
+            <circle cx="23" cy="26" r="0.5" fill="white" opacity="0.4"/>
+          </g>
+        </g>
+        
+        <!-- Floating particles (visible on hover) -->
+        <g class="codex-particle" style="animation-delay: 0s;">
+          <circle cx="10" cy="18" r="1" fill="#8b5cf6"/>
+        </g>
+        <g class="codex-particle" style="animation-delay: 0.3s;">
+          <circle cx="38" cy="20" r="1.2" fill="#ec4899"/>
+        </g>
+        <g class="codex-particle" style="animation-delay: 0.6s;">
+          <circle cx="14" cy="32" r="0.8" fill="#3b82f6"/>
+        </g>
+        <g class="codex-particle" style="animation-delay: 0.9s;">
+          <circle cx="34" cy="30" r="1" fill="#10b981"/>
+        </g>
+        
+        <!-- Scan line -->
+        <line class="codex-scan-line" x1="6" y1="24" x2="42" y2="24" stroke="url(#codex-scan-gradient)" stroke-width="2" stroke-linecap="round" style="opacity: 0;"/>
+        
+        <!-- Electric arcs (hover effect) -->
+        <path class="codex-electric" d="M12 24 Q18 20, 24 24 Q30 28, 36 24" fill="none" stroke="rgba(139, 92, 246, 0.8)" stroke-width="1" style="opacity: 0;"/>
+        
+        <!-- Gradient definitions -->
+        <defs>
+          <radialGradient id="codex-iris-gradient-animated" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#60a5fa">
+              <animate attributeName="stop-color" values="#60a5fa;#a78bfa;#f472b6;#34d399;#60a5fa" dur="8s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="50%" stop-color="#3b82f6">
+              <animate attributeName="stop-color" values="#3b82f6;#8b5cf6;#ec4899;#10b981;#3b82f6" dur="8s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="100%" stop-color="#1d4ed8">
+              <animate attributeName="stop-color" values="#1d4ed8;#6d28d9;#be185d;#047857;#1d4ed8" dur="8s" repeatCount="indefinite"/>
+            </stop>
+          </radialGradient>
+          <radialGradient id="codex-iris-gradient-hover" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#f0abfc"/>
+            <stop offset="50%" stop-color="#c084fc"/>
+            <stop offset="100%" stop-color="#9333ea"/>
+          </radialGradient>
+          <linearGradient id="codex-scan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="transparent"/>
+            <stop offset="30%" stop-color="#60a5fa"/>
+            <stop offset="50%" stop-color="#ffffff"/>
+            <stop offset="70%" stop-color="#60a5fa"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    `;
     
     // Position using transform for smooth dragging
-    icon.style.cssText = 'position:fixed;width:56px;height:56px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 4px 20px rgba(37,99,235,0.5);z-index:2147483647;border:3px solid white;will-change:transform;user-select:none;';
+    icon.style.cssText = 'position:fixed;width:60px;height:60px;background:radial-gradient(circle at 30% 30%, #1e293b, #0f172a, #030712);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:grab;z-index:2147483647;border:2px solid rgba(59,130,246,0.5);will-change:transform;user-select:none;transition:transform 0.3s ease;';
     icon.style.right = '30px';
     icon.style.bottom = '100px';
 
@@ -139,6 +361,18 @@
 
     document.body.appendChild(icon);
     document.body.appendChild(panel);
+
+    // Enhanced hover effects with scale transform
+    icon.addEventListener('mouseenter', function() {
+      if (!isDragging) {
+        icon.style.transform = 'scale(1.1)';
+      }
+    });
+    icon.addEventListener('mouseleave', function() {
+      if (!isDragging) {
+        icon.style.transform = 'scale(1)';
+      }
+    });
 
     // Drag state
     var isDragging = false;
