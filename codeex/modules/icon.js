@@ -412,6 +412,13 @@
     setTimeout(resetIcon, 5000);
   }
 
+  /**
+   * Trigger Authentication Failure Animation
+   */
+  function triggerAuthFailure() {
+    showError();
+  }
+
   // Register module
   Codex.ui.icon = {
     create: create,
