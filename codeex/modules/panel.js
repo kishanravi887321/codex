@@ -124,9 +124,14 @@
    * Render panel footer
    */
   function renderFooter() {
-    return '<div style="padding:10px 16px;border-top:1px solid #e2e8f0;background:#f8fafc;">' +
-      '<button id="codex-copy-btn">' +
-      Icons.copy + 'Copy JSON' +
+    return '<div style="padding:10px 16px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;flex-direction:column;gap:8px;">' +
+      '<button id="codex-save-btn" style="width:100%;background:#2563eb;color:white;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>' +
+      ' Save to Dashboard' +
+      '</button>' +
+      '<div id="codex-save-msg" style="font-size:11px;text-align:center;display:none;margin-top:-4px;"></div>' +
+      '<button id="codex-copy-btn" style="width:100%;background:transparent;color:#64748b;border:1px solid #cbd5e1;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;">' +
+      Icons.copy + ' Copy JSON' +
       '</button>' +
       '</div>';
   }
@@ -139,6 +144,57 @@
     if (copyBtn) {
       copyBtn.onclick = function() {
         copyToClipboard(data, copyBtn);
+      };
+    }
+
+    var saveBtn = document.getElementById('codex-save-btn');
+    var msgDiv = document.getElementById('codex-save-msg');
+
+    if (saveBtn) {
+      saveBtn.onclick = function() {
+        if (saveBtn.disabled) return;
+        
+        // Reset state
+        saveBtn.disabled = true;
+        var originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = 'Saving...';
+        saveBtn.style.opacity = '0.7';
+        msgDiv.style.display = 'none';
+
+        Codex.modules.api.saveProblem(data)
+          .then(function() {
+            saveBtn.innerHTML = Icons.check + ' Saved!';
+            saveBtn.style.background = '#10b981';
+            
+            setTimeout(function() {
+              saveBtn.disabled = false;
+              saveBtn.innerHTML = originalText;
+              saveBtn.style.background = '#2563eb';
+              saveBtn.style.opacity = '1';
+            }, 2000);
+          })
+          .catch(function(err) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+            saveBtn.style.background = '#ef4444';
+            saveBtn.style.opacity = '1';
+            
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#ef4444';
+            
+            if (err.message === 'NOT_AUTHENTICATED' || err.message === 'TOKEN_EXPIRED') {
+              msgDiv.innerHTML = '⚠️ Please <a href="https://cp.saksin.online" target="_blank" style="color:#ef4444;text-decoration:underline;font-weight:600;">login to Dashboard</a> first';
+            } else {
+              msgDiv.innerText = 'Error: ' + (err.message || 'Failed to save');
+            }
+
+            // Reset button style after delay
+            setTimeout(function() {
+              if (saveBtn.style.background === 'rgb(239, 68, 68)' || saveBtn.style.background === '#ef4444') {
+                saveBtn.style.background = '#2563eb';
+              }
+            }, 3000);
+          });
       };
     }
   }

@@ -15,6 +15,7 @@
       if (window.Codex && 
           window.Codex.modules.extractor && 
           window.Codex.modules.styles &&
+          window.Codex.modules.api &&
           window.Codex.ui.panel &&
           window.Codex.ui.icon) {
         clearInterval(checkInterval);

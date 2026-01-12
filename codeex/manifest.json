@@ -5,7 +5,11 @@
   "description": "Extract problem topics from coding platforms like LeetCode",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://cp.saksin.online/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -33,10 +37,20 @@
         "modules/styles.js",
         "modules/panel.js",
         "modules/icon.js",
+        "modules/api.js",
         "modules/main.js"
       ],
       "run_at": "document_end",
       "all_frames": false
+    },
+    {
+      "matches": [
+        "https://cp.saksin.online/*"
+      ],
+      "js": [
+        "modules/auth-sync.js"
+      ],
+      "run_at": "document_idle"
     }
   ]
 }
