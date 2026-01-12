@@ -265,51 +265,11 @@
 
   /**
    * Trigger Authentication Success Animation
+   * Delegates to standard success animation
    */
   function triggerAuthSuccess() {
-    // If not created yet, don't crash
-    if (!currentIcon) {
-      currentIcon = document.getElementById('codex-floating-icon');
-    }
-    if (!currentIcon) return;
-
-    var originalContent = currentIcon.innerHTML;
-
-    // 1. Success Icon SVG
-    var successSVG = `
-      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-success-pop 0.4s ease-out forwards;">
-        <!-- Glowing Pulse Rings -->
-        <circle cx="24" cy="24" r="18" fill="none" stroke="#8b5cf6" stroke-width="1.5"
-          style="transform-origin: center; animation: codex-success-pulse 1.2s ease-out infinite; opacity: 0.6;" />
-        <circle cx="24" cy="24" r="18" fill="none" stroke="#c084fc" stroke-width="1" 
-          style="transform-origin: center; animation: codex-success-pulse 1.2s ease-out 0.3s infinite; opacity: 0.4;" />
-        
-        <!-- Outer Circle with Neon Glow -->
-        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="#8b5cf6" stroke-width="2" 
-          style="animation: codex-neon-pulse 1.5s ease-in-out infinite;" />
-          
-        <!-- Checkmark -->
-        <path d="M14 24 L22 32 L34 16" class="codex-check-path" stroke="#a78bfa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    `;
-
-    // 2. Clear current icon and show success
-    currentIcon.innerHTML = successSVG;
-
-    // 3. Play animation logic
-    // Duration: ~2s total (0.6s draw + pulses)
-    setTimeout(function() {
-      // Transition back - Hard swap back to eye
-      // Re-generate eye SVG to ensure clean state
-      currentIcon.innerHTML = generateEyeSVG();
-      
-      // Optional: Add a subtle flash upon return
-      currentIcon.style.animation = 'codex-success-pop 0.3s ease-out';
-      setTimeout(function() {
-        currentIcon.style.animation = 'none';
-      }, 300);
-      
-    }, 2000);
+    // Treat auth success as a "created/success" event (Green)
+    showSuccess('created');
   }
 
   /**
@@ -321,95 +281,119 @@
     currentIcon.style.animation = 'codex-border-glow 8s ease-in-out infinite';
     currentIcon.style.borderColor = 'rgba(59,130,246,0.5)';
     
-    // Hide reconnect label if exists
+    // Remove reconnect label if exists
     var label = document.getElementById('codex-reconnect-label');
-    if (label) label.classList.remove('visible');
+    if (label) {
+      if (label.parentNode) label.parentNode.removeChild(label);
+    }
   }
 
   /**
    * Show Success Animation (New or Updated)
+   * Morph -> Check -> 3 Pulses -> Return
    */
   function showSuccess(type) {
     if (!currentIcon) return;
     
-    var color = type === 'created' ? '#22c55e' : '#facc15'; // Green vs Yellow
-    var pulseClass = 'codex-success-pulse'; // New specific class later? Or inline style
-
-    // SVG
+    // 1. Determine Colors: Green (Saved) vs Yellow (Updated)
+    // Saved = 'created' usually, Updated = 'updated'
+    var isNew = (type === 'created');
+    var color = isNew ? '#22c55e' : '#facc15'; // Green-500 or Yellow-400
+    
+    // 2. Construct SVG
+    // We need 3 pulse rings that act sequentially or together? 
+    // "Outer ring performs 3 clean pulse blinks".
+    // We can use a single ring iterating 3 times.
+    
     var svg = `
-      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-pop 0.4s ease-out forwards;">
-        <!-- Glowing Pulse Rings -->
-        <circle cx="24" cy="24" r="18" fill="none" stroke="${color}" stroke-width="2"
-          style="transform-origin: center; animation: codex-status-pulse 0.6s ease-out 3;" />
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-status-svg" style="animation: codex-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;">
+        <!-- Base Circle Background (Dark) -->
+        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.95)" />
         
-        <!-- Outer Circle / Icon Base -->
-        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="${color}" stroke-width="2" 
-          style="filter: drop-shadow(0 0 8px ${color});" />
+        <!-- Outer Glowing Ring -->
+        <circle cx="24" cy="24" r="21" fill="none" stroke="${color}" stroke-width="2" style="filter: drop-shadow(0 0 6px ${color});" />
+        
+        <!-- Pulse Ring (3 iterations) -->
+        <circle cx="24" cy="24" r="21" fill="none" stroke="${color}" stroke-width="2" 
+          style="transform-origin: center; animation: codex-status-pulse 0.6s ease-out 3; opacity: 0;" />
           
-        <!-- Checkmark -->
+        <!-- Checkmark (Animated Draw) -->
+        <!-- Path: M14 24 L22 32 L34 16 -->
         <path d="M14 24 L22 32 L34 16" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
-          style="stroke-dasharray: 25; stroke-dashoffset: 25; animation: codex-draw-path 0.4s ease-out forwards;" />
+          style="stroke-dasharray: 30; stroke-dashoffset: 30; animation: codex-draw-path 0.4s ease-out 0.1s forwards;" />
       </svg>
     `;
 
     currentIcon.innerHTML = svg;
-    currentIcon.style.animation = 'none'; // Stop border glow
-    currentIcon.style.borderColor = color;
+    currentIcon.style.animation = 'none'; // Stop default border glow
+    currentIcon.style.borderColor = 'transparent'; // Let SVG handle border/pulse
 
-    // Reset after animation (3 pulses ~ 1.8s)
+    // 3. Reset after animation completes
+    // 3 pulses * 0.6s = 1.8s. Let's give it 2s total.
     setTimeout(resetIcon, 2000);
   }
 
   /**
    * Show Error Animation
+   * Morph -> Cross -> Red Glow -> Reconnect Link
    */
   function showError() {
     if (!currentIcon) return;
     
-    var color = '#ef4444'; // Soft Red
+    var color = '#ef4444'; // Red-500
 
     var svg = `
-      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-shake 0.5s ease-in-out;">
-        <!-- Error Particles/Glow -->
-        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="${color}" stroke-width="2" 
-          style="filter: drop-shadow(0 0 10px ${color});" />
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-status-svg" style="animation: codex-pop 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;">
+        <!-- Base Circle -->
+        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.95)" />
+        
+        <!-- Red Outer Ring with single glow/pulse -->
+        <circle cx="24" cy="24" r="21" fill="none" stroke="${color}" stroke-width="2" 
+           style="filter: drop-shadow(0 0 8px ${color}); animation: codex-status-pulse 1s ease-out 1 forwards;"/>
           
-        <!-- Cross Mark -->
+        <!-- Cross Mark X -->
+        <!-- Line 1 -->
         <path d="M16 16 L32 32" stroke="${color}" stroke-width="3" stroke-linecap="round" 
-          style="stroke-dasharray: 24; stroke-dashoffset: 24; animation: codex-draw-path 0.4s ease-out forwards;"/>
+          style="stroke-dasharray: 24; stroke-dashoffset: 24; animation: codex-draw-path 0.3s ease-out 0.1s forwards;"/>
+        <!-- Line 2 -->
         <path d="M32 16 L16 32" stroke="${color}" stroke-width="3" stroke-linecap="round" 
-          style="stroke-dasharray: 24; stroke-dashoffset: 24; animation: codex-draw-path 0.4s ease-out 0.2s forwards;" />
+          style="stroke-dasharray: 24; stroke-dashoffset: 24; animation: codex-draw-path 0.3s ease-out 0.2s forwards;" />
       </svg>
     `;
 
     currentIcon.innerHTML = svg;
+    currentIcon.style.borderColor = 'transparent';
     currentIcon.style.animation = 'none';
-    currentIcon.style.borderColor = color;
 
-    // Show reconnect label
-    var label = document.getElementById('codex-reconnect-label');
-    if (!label) {
-      label = document.createElement('a');
-      label.id = 'codex-reconnect-label';
-      label.href = 'https://cp.saksin.online/token'; // Or appropriate auth URL
-      label.target = '_blank';
-      label.textContent = 'Reconnect Extension';
-      currentIcon.appendChild(label);
-    }
+    // Create/Show Reconnect Link
+    // We append it to the icon container, so it floats with it
+    var labelIdx = 'codex-reconnect-label';
+    var existingLabel = document.getElementById(labelIdx);
+    if (existingLabel) existingLabel.parentNode.removeChild(existingLabel);
+
+    var label = document.createElement('a');
+    label.id = labelIdx;
+    label.href = 'https://cp.saksin.online/token'; // Auth URL
+    label.target = '_blank';
+    label.textContent = 'Reconnect Extension';
+    currentIcon.appendChild(label); // Append to floating icon div
     
-    // Make visible after 1s
+    // Show after 1 second
     setTimeout(function() {
-      if (label) label.classList.add('visible');
+        if (document.getElementById(labelIdx)) { // Ensure still relevant
+            label.classList.add('visible');
+        }
     }, 1000);
 
-    // Don't auto-reset completely if we want them to click link?
-    // User requested "After 1 second: Show label". 
-    // Usually invalid token implies a semi-permanent error state until fixed.
-    // We'll let it stay red or reset after a longer time?
-    // Let's reset icon but keep label? Or reset all after 5s?
-    // "Clicking opens...".
-    // I will keep the error state for 4-5 seconds then reset.
-    setTimeout(resetIcon, 5000);
+    // Keep error state for a while, or until user interaction?
+    // "After 1 second: A small link appears... Clicking it opens page"
+    // If we reset too fast, they can't click.
+    // Let's hold it for 6 seconds, giving time to read and click.
+    // Or maybe we don't auto-reset failure?
+    // User didn't specify auto-return for failure, only "Morph -> Red Cross -> Link".
+    // But presumably it should eventually go back if ignored.
+    // Let's set 6s.
+    setTimeout(resetIcon, 6000);
   }
 
   /**

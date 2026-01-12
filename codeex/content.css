@@ -105,37 +105,55 @@
   100% { stroke-dashoffset: 0; opacity: 1; }
 }
 
-/* Success Pulse Ring Expansion */
-@keyframes codex-success-pulse {
-  0% { transform: scale(0.8); opacity: 0.8; stroke-width: 2px; }
-  100% { transform: scale(2.2); opacity: 0; stroke-width: 0px; }
+/* Success Status Pulse (clean expand & fade) */
+@keyframes codex-status-pulse {
+  0% { transform: scale(1); opacity: 0.8; stroke-width: 2px; }
+  100% { transform: scale(1.6); opacity: 0; stroke-width: 0px; }
 }
 
-/* Success Icon Scale Pop */
-@keyframes codex-success-pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+/* Path Drawing Animation */
+@keyframes codex-draw-path {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Icon Pop/Morph */
+@keyframes codex-pop {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 
-/* Neon Glow Pulse */
-@keyframes codex-neon-pulse {
-  0%, 100% { filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.6)); }
-  50% { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 1)); }
+/* Reconnect Label Fade In */
+@keyframes codex-fade-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.codex-success-ring {
-  transform-origin: center;
-  fill: none;
-  stroke: #8b5cf6;
-  stroke-linecap: round;
+/* Reconnect Link Style */
+#codex-reconnect-label {
+  position: absolute;
+  top: 70px; /* Below the icon */
+  white-space: nowrap;
+  background: rgba(15, 23, 42, 0.95);
+  color: #ef4444;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: sans-serif;
+  text-decoration: none;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 2147483648;
 }
 
-.codex-check-path {
-  stroke-dasharray: 25;
-  stroke-dashoffset: 25;
-  animation: codex-check-draw 0.6s ease-out forwards;
+#codex-reconnect-label.visible {
+  opacity: 1;
+  pointer-events: auto;
+  animation: codex-fade-in 0.3s ease-out forwards;
 }
+
 
 /* Error Shake */
 @keyframes codex-error-shake {
