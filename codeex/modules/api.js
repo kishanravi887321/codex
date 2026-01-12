@@ -7,7 +7,7 @@
   'use strict';
 
   var Codex = window.Codex;
-  var API_BASE_URL = 'https://cp.saksin.online/api';
+  var API_BASE_URL = 'https://cpbackend.saksin.online/api';
 // var API_BASE_URL = 'http://localhost:3000/api';  // For local testing
     // API_BASE_URL = 'https://cp.saksin.online/api';
   /**
