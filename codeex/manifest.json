@@ -37,7 +37,6 @@
         "modules/styles.js",
         "modules/panel.js",
         "modules/icon.js",
-        "modules/feedback.js",
         "modules/api.js",
         "modules/main.js"
       ],
