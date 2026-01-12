@@ -28,8 +28,8 @@
     try {
       if (document.getElementById('codex-floating-icon')) return;
 
-      // Inject styles
-      window.Codex.modules.styles.inject();
+      // Inject styles handled by manifest now
+      // window.Codex.modules.styles.inject();
 
       // Create Icon (but hidden initially? No, request implies visible interaction)
       var icon = window.Codex.ui.icon.create();

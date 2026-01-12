@@ -40,6 +40,7 @@
         "modules/api.js",
         "modules/main.js"
       ],
+      "css": ["content.css"],
       "run_at": "document_end",
       "all_frames": false
     },

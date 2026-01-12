@@ -50,8 +50,8 @@
       return;
     }
 
-    // Inject styles
-    Codex.modules.styles.inject();
+    // Inject styles (now handled by manifest content.css mostly)
+    // Codex.modules.styles.inject();
 
     // Create UI elements
     var icon = Codex.ui.icon.create();
