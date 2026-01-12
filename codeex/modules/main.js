@@ -80,20 +80,58 @@
   }
 
   /**
-   * Handle icon click - extract data and show panel
+   * Handle icon click - extract data and UPSERT silently
    */
-  function handleIconClick(panel) {
+  async function handleIconClick(panel) {
     var Codex = window.Codex;
-    var isVisible = panel.style.display !== 'none' && panel.style.display !== '';
     
+    // Animate click press
+    var icon = document.getElementById('codex-floating-icon');
+    if (icon) {
+      icon.style.transform = 'scale(0.9)';
+      setTimeout(function() { icon.style.transform = 'scale(1)'; }, 100);
+    }
+
+    try {
+      // 1. Extract Data
+      var data = Codex.modules.extractor.extract();
+      
+      if (!data || !data.name) {
+        Codex.utils.log('No problem data found');
+        return;
+      }
+
+      // 2. Call API (Silent Upsert)
+      try {
+        var result = await Codex.modules.api.upsertProblem(data);
+        
+        // 3. Play Success Animation
+        if (result.success) {
+          Codex.ui.icon.showSuccess(result.action); // 'created' or 'updated'
+        } else {
+          Codex.ui.icon.showError();
+        }
+      } catch (apiError) {
+        Codex.utils.log('API Error:', apiError);
+        // Play Error Animation
+        Codex.ui.icon.showError();
+      }
+
+    } catch (err) {
+      console.error('[Codex] Click handler error:', err);
+      Codex.ui.icon.showError();
+    }
+    
+    /* Panel Logic Disabled for Silent Mode
+    var isVisible = panel.style.display !== 'none' && panel.style.display !== '';
     if (isVisible) {
       Codex.ui.panel.hide(panel);
     } else {
-      // Extract data (lazy loading)
       var data = Codex.modules.extractor.extract();
       Codex.ui.panel.render(panel, data);
       Codex.ui.panel.show(panel);
     }
+    */
   }
 
   /**

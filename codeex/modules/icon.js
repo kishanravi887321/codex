@@ -313,45 +313,103 @@
   }
 
   /**
-   * Trigger Authentication Failure Animation
+   * Reset icon to default state
    */
-  function triggerAuthFailure() {
-    if (!currentIcon) {
-      currentIcon = document.getElementById('codex-floating-icon');
-    }
+  function resetIcon() {
+    if (!currentIcon) return;
+    currentIcon.innerHTML = generateEyeSVG();
+    currentIcon.style.animation = 'codex-border-glow 8s ease-in-out infinite';
+    currentIcon.style.borderColor = 'rgba(59,130,246,0.5)';
+    
+    // Hide reconnect label if exists
+    var label = document.getElementById('codex-reconnect-label');
+    if (label) label.classList.remove('visible');
+  }
+
+  /**
+   * Show Success Animation (New or Updated)
+   */
+  function showSuccess(type) {
     if (!currentIcon) return;
     
-    // 1. Failure Icon SVG with Red Theme
-    var failureSVG = `
-      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-error-shake 0.5s ease-in-out;">
-        <!-- Error Particles/Glow -->
-        <circle cx="24" cy="24" r="18" fill="none" stroke="#ef4444" stroke-width="1.5"
-          style="transform-origin: center; opacity: 0.6;" />
+    var color = type === 'created' ? '#22c55e' : '#facc15'; // Green vs Yellow
+    var pulseClass = 'codex-success-pulse'; // New specific class later? Or inline style
+
+    // SVG
+    var svg = `
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-pop 0.4s ease-out forwards;">
+        <!-- Glowing Pulse Rings -->
+        <circle cx="24" cy="24" r="18" fill="none" stroke="${color}" stroke-width="2"
+          style="transform-origin: center; animation: codex-status-pulse 0.6s ease-out 3;" />
         
-        <!-- Outer Circle with Red Glow -->
-        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="#ef4444" stroke-width="2" 
-          style="filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.6));" />
+        <!-- Outer Circle / Icon Base -->
+        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="${color}" stroke-width="2" 
+          style="filter: drop-shadow(0 0 8px ${color});" />
           
-        <!-- Cross Mark -->
-        <path d="M16 16 L32 32" class="codex-cross-path" stroke="#fca5a5" stroke-width="3" stroke-linecap="round" />
-        <path d="M32 16 L16 32" class="codex-cross-path" stroke="#fca5a5" stroke-width="3" stroke-linecap="round" style="animation-delay: 0.2s;" />
+        <!-- Checkmark -->
+        <path d="M14 24 L22 32 L34 16" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+          style="stroke-dasharray: 25; stroke-dashoffset: 25; animation: codex-draw-path 0.4s ease-out forwards;" />
       </svg>
     `;
 
-    // 2. Clear current icon and show failure
-    currentIcon.innerHTML = failureSVG;
-    
-    // Change border color to red temporarily
-    var originalBorder = currentIcon.style.borderColor;
-    currentIcon.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+    currentIcon.innerHTML = svg;
+    currentIcon.style.animation = 'none'; // Stop border glow
+    currentIcon.style.borderColor = color;
 
-    // 3. Reset after delay
+    // Reset after animation (3 pulses ~ 1.8s)
+    setTimeout(resetIcon, 2000);
+  }
+
+  /**
+   * Show Error Animation
+   */
+  function showError() {
+    if (!currentIcon) return;
+    
+    var color = '#ef4444'; // Soft Red
+
+    var svg = `
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-shake 0.5s ease-in-out;">
+        <!-- Error Particles/Glow -->
+        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="${color}" stroke-width="2" 
+          style="filter: drop-shadow(0 0 10px ${color});" />
+          
+        <!-- Cross Mark -->
+        <path d="M16 16 L32 32" stroke="${color}" stroke-width="3" stroke-linecap="round" 
+          style="stroke-dasharray: 24; stroke-dashoffset: 24; animation: codex-draw-path 0.4s ease-out forwards;"/>
+        <path d="M32 16 L16 32" stroke="${color}" stroke-width="3" stroke-linecap="round" 
+          style="stroke-dasharray: 24; stroke-dashoffset: 24; animation: codex-draw-path 0.4s ease-out 0.2s forwards;" />
+      </svg>
+    `;
+
+    currentIcon.innerHTML = svg;
+    currentIcon.style.animation = 'none';
+    currentIcon.style.borderColor = color;
+
+    // Show reconnect label
+    var label = document.getElementById('codex-reconnect-label');
+    if (!label) {
+      label = document.createElement('a');
+      label.id = 'codex-reconnect-label';
+      label.href = 'https://cp.saksin.online/token'; // Or appropriate auth URL
+      label.target = '_blank';
+      label.textContent = 'Reconnect Extension';
+      currentIcon.appendChild(label);
+    }
+    
+    // Make visible after 1s
     setTimeout(function() {
-      currentIcon.innerHTML = generateEyeSVG();
-      currentIcon.style.borderColor = originalBorder;
-      
-      // Flash red border slightly on return or just neutral
-    }, 2000);
+      if (label) label.classList.add('visible');
+    }, 1000);
+
+    // Don't auto-reset completely if we want them to click link?
+    // User requested "After 1 second: Show label". 
+    // Usually invalid token implies a semi-permanent error state until fixed.
+    // We'll let it stay red or reset after a longer time?
+    // Let's reset icon but keep label? Or reset all after 5s?
+    // "Clicking opens...".
+    // I will keep the error state for 4-5 seconds then reset.
+    setTimeout(resetIcon, 5000);
   }
 
   // Register module
@@ -362,7 +420,9 @@
     getPosition: getPosition,
     generateEyeSVG: generateEyeSVG,
     triggerAuthSuccess: triggerAuthSuccess,
-    triggerAuthFailure: triggerAuthFailure
+    triggerAuthFailure: triggerAuthFailure,
+    showSuccess: showSuccess,
+    showError: showError
   };
 
   Codex.utils.log('Icon module loaded');
