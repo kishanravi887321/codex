@@ -11,12 +11,12 @@
   var API_BASE_URL = 'https://cp.saksin.online/api/v1'; 
 
   /**
-   * Get the JWT token from storage
+   * Get the extension token from storage
    */
   function getToken() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(['codex_jwt'], function(result) {
-        resolve(result.codex_jwt);
+      chrome.storage.local.get(['codex_token'], function(result) {
+        resolve(result.codex_token);
       });
     });
   }
@@ -55,8 +55,8 @@
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Token might be invalid/expired
-          chrome.storage.local.remove('codex_jwt');
+          // Token is invalid/revoked
+          chrome.storage.local.remove('codex_token');
           throw new Error('TOKEN_EXPIRED');
         }
         const err = await response.text();

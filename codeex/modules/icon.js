@@ -7,6 +7,7 @@
   'use strict';
 
   var Codex = window.Codex;
+  var currentIcon = null;
 
   /**
    * Generate the animated eye SVG
@@ -126,6 +127,7 @@
     icon.style.right = '30px';
     icon.style.bottom = '100px';
     
+    currentIcon = icon;
     return icon;
   }
 
@@ -253,13 +255,71 @@
     return { x: rect.left, y: rect.top };
   }
 
+  /**
+   * Set icon content
+   */
+  function setContent(svgContent) {
+    if (!currentIcon) return;
+    currentIcon.innerHTML = svgContent;
+  }
+
+  /**
+   * Trigger Authentication Success Animation
+   */
+  function triggerAuthSuccess() {
+    // If not created yet, don't crash
+    if (!currentIcon) {
+      currentIcon = document.getElementById('codex-floating-icon');
+    }
+    if (!currentIcon) return;
+
+    var originalContent = currentIcon.innerHTML;
+
+    // 1. Success Icon SVG
+    var successSVG = `
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-success-pop 0.4s ease-out forwards;">
+        <!-- Glowing Pulse Rings -->
+        <circle cx="24" cy="24" r="18" fill="none" stroke="#8b5cf6" stroke-width="1.5"
+          style="transform-origin: center; animation: codex-success-pulse 1.2s ease-out infinite; opacity: 0.6;" />
+        <circle cx="24" cy="24" r="18" fill="none" stroke="#c084fc" stroke-width="1" 
+          style="transform-origin: center; animation: codex-success-pulse 1.2s ease-out 0.3s infinite; opacity: 0.4;" />
+        
+        <!-- Outer Circle with Neon Glow -->
+        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="#8b5cf6" stroke-width="2" 
+          style="animation: codex-neon-pulse 1.5s ease-in-out infinite;" />
+          
+        <!-- Checkmark -->
+        <path d="M14 24 L22 32 L34 16" class="codex-check-path" stroke="#a78bfa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    `;
+
+    // 2. Clear current icon and show success
+    currentIcon.innerHTML = successSVG;
+
+    // 3. Play animation logic
+    // Duration: ~2s total (0.6s draw + pulses)
+    setTimeout(function() {
+      // Transition back - Hard swap back to eye
+      // Re-generate eye SVG to ensure clean state
+      currentIcon.innerHTML = generateEyeSVG();
+      
+      // Optional: Add a subtle flash upon return
+      currentIcon.style.animation = 'codex-success-pop 0.3s ease-out';
+      setTimeout(function() {
+        currentIcon.style.animation = 'none';
+      }, 300);
+      
+    }, 2000);
+  }
+
   // Register module
   Codex.ui.icon = {
     create: create,
     initDragging: initDragging,
     setPosition: setPosition,
     getPosition: getPosition,
-    generateEyeSVG: generateEyeSVG
+    generateEyeSVG: generateEyeSVG,
+    triggerAuthSuccess: triggerAuthSuccess
   };
 
   Codex.utils.log('Icon module loaded');

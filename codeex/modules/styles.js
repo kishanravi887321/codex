@@ -99,6 +99,49 @@
       50% { transform: scale(1.3); opacity: 0; stroke-width: 0; }
       100% { transform: scale(1); opacity: 0.5; stroke-width: 2; }
     }
+
+    /* ============================================
+       AUTH SUCCESS ANIMATIONS
+       ============================================ */
+
+    /* Success Tick Draw */
+    @keyframes codex-check-draw {
+      0% { stroke-dashoffset: 25; opacity: 0; }
+      50% { opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+
+    /* Success Pulse Ring Expansion */
+    @keyframes codex-success-pulse {
+      0% { transform: scale(0.8); opacity: 0.8; stroke-width: 2px; }
+      100% { transform: scale(2.2); opacity: 0; stroke-width: 0px; }
+    }
+    
+    /* Success Icon Scale Pop */
+    @keyframes codex-success-pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* Neon Glow Pulse */
+    @keyframes codex-neon-pulse {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.6)); }
+      50% { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 1)); }
+    }
+
+    .codex-success-ring {
+      transform-origin: center;
+      fill: none;
+      stroke: #8b5cf6;
+      stroke-linecap: round;
+    }
+    
+    .codex-check-path {
+      stroke-dasharray: 25;
+      stroke-dashoffset: 25;
+      animation: codex-check-draw 0.6s ease-out forwards;
+    }
     
     /* Electric arc flicker */
     @keyframes codex-electric-arc {

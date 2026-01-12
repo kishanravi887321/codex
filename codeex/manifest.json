@@ -48,6 +48,9 @@
         "https://cp.saksin.online/*"
       ],
       "js": [
+        "modules/namespace.js",
+        "modules/styles.js",
+        "modules/icon.js",
         "modules/auth-sync.js"
       ],
       "run_at": "document_idle"
