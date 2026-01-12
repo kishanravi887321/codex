@@ -312,6 +312,48 @@
     }, 2000);
   }
 
+  /**
+   * Trigger Authentication Failure Animation
+   */
+  function triggerAuthFailure() {
+    if (!currentIcon) {
+      currentIcon = document.getElementById('codex-floating-icon');
+    }
+    if (!currentIcon) return;
+    
+    // 1. Failure Icon SVG with Red Theme
+    var failureSVG = `
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" class="codex-eye-group" style="animation: codex-error-shake 0.5s ease-in-out;">
+        <!-- Error Particles/Glow -->
+        <circle cx="24" cy="24" r="18" fill="none" stroke="#ef4444" stroke-width="1.5"
+          style="transform-origin: center; opacity: 0.6;" />
+        
+        <!-- Outer Circle with Red Glow -->
+        <circle cx="24" cy="24" r="21" fill="rgba(15, 23, 42, 0.9)" stroke="#ef4444" stroke-width="2" 
+          style="filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.6));" />
+          
+        <!-- Cross Mark -->
+        <path d="M16 16 L32 32" class="codex-cross-path" stroke="#fca5a5" stroke-width="3" stroke-linecap="round" />
+        <path d="M32 16 L16 32" class="codex-cross-path" stroke="#fca5a5" stroke-width="3" stroke-linecap="round" style="animation-delay: 0.2s;" />
+      </svg>
+    `;
+
+    // 2. Clear current icon and show failure
+    currentIcon.innerHTML = failureSVG;
+    
+    // Change border color to red temporarily
+    var originalBorder = currentIcon.style.borderColor;
+    currentIcon.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+
+    // 3. Reset after delay
+    setTimeout(function() {
+      currentIcon.innerHTML = generateEyeSVG();
+      currentIcon.style.borderColor = originalBorder;
+      
+      // Flash red border slightly on return or just neutral
+    }, 2000);
+  }
+
   // Register module
   Codex.ui.icon = {
     create: create,
@@ -319,7 +361,8 @@
     setPosition: setPosition,
     getPosition: getPosition,
     generateEyeSVG: generateEyeSVG,
-    triggerAuthSuccess: triggerAuthSuccess
+    triggerAuthSuccess: triggerAuthSuccess,
+    triggerAuthFailure: triggerAuthFailure
   };
 
   Codex.utils.log('Icon module loaded');

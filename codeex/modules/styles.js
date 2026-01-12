@@ -142,6 +142,28 @@
       stroke-dashoffset: 25;
       animation: codex-check-draw 0.6s ease-out forwards;
     }
+
+    /* Error Shake */
+    @keyframes codex-error-shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-2px); }
+      80% { transform: translateX(2px); }
+    }
+    
+    /* Error Cross Draw */
+    @keyframes codex-cross-draw {
+      0% { stroke-dashoffset: 16; opacity: 0; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+
+    .codex-cross-path {
+      stroke-dasharray: 16;
+      stroke-dashoffset: 16;
+      animation: codex-cross-draw 0.4s ease-out forwards;
+    }
+  `;
     
     /* Electric arc flicker */
     @keyframes codex-electric-arc {
