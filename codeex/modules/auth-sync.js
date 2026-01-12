@@ -56,19 +56,33 @@
         const extToken = localStorage.getItem('extensionToken');
 
         if (extToken) {
-          // Save only this specific token
-          chrome.storage.local.set({ 
-            'codex_token': extToken
-          }, function() {
-            console.log('[Codex] Extension token synced successfully');
-            
-            // Trigger Success Animation
-            setTimeout(() => {
-                if (window.Codex && window.Codex.ui && window.Codex.ui.icon) {
-                  window.Codex.ui.icon.triggerAuthSuccess();
-                }
-            }, 100);
-          });
+          // Check validity before calling API to avoid "Extension context invalidated" noise
+          try {
+            if (!chrome.runtime || !chrome.runtime.id) {
+              throw new Error('Extension context invalidated');
+            }
+
+            // Save only this specific token
+            chrome.storage.local.set({ 
+              'codex_token': extToken
+            }, function() {
+              if (chrome.runtime.lastError) {
+                console.error('[Codex] Storage error:', chrome.runtime.lastError);
+                return;
+              }
+              
+              console.log('[Codex] Extension token synced successfully');
+              
+              // Trigger Success Animation
+              setTimeout(() => {
+                  if (window.Codex && window.Codex.ui && window.Codex.ui.icon) {
+                    window.Codex.ui.icon.triggerAuthSuccess();
+                  }
+              }, 100);
+            });
+          } catch (e) {
+            console.log('[Codex] Connection to extension lost. Please refresh the page.');
+          }
         } else {
           // Token missing or removed
           chrome.storage.local.remove('codex_token');
