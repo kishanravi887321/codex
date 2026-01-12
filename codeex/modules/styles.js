@@ -163,7 +163,6 @@
       stroke-dashoffset: 16;
       animation: codex-cross-draw 0.4s ease-out forwards;
     }
-  `;
     
     /* Electric arc flicker */
     @keyframes codex-electric-arc {

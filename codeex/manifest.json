@@ -53,6 +53,7 @@
         "modules/icon.js",
         "modules/auth-sync.js"
       ],
+      "css": ["content.css"],
       "run_at": "document_idle"
     }
   ]
