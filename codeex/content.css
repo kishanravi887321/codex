@@ -94,9 +94,62 @@
   100% { transform: scale(1); opacity: 0.5; stroke-width: 2; }
 }
 
+
 /* ============================================
-   AUTH SUCCESS ANIMATIONS
+   FEEDBACK ANIMATIONS (Success/Update/Error)
    ============================================ */
+
+/* Reconnect Label */
+.codex-reconnect-label {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ef4444;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  opacity: 0;
+  animation: codex-label-fade-in 0.3s ease-out forwards;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 2147483648;
+}
+
+.codex-reconnect-label:hover {
+  background: #dc2626;
+  transform: translateX(-50%) scale(1.05);
+}
+
+@keyframes codex-label-fade-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-5px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Success Neon Pulse (Green) */
+@keyframes codex-pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Update Neon Pulse (Yellow) */
+@keyframes codex-pulse-yellow {
+  0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
+}
+
+/* Error Glow (Red) */
+@keyframes codex-glow-red {
+  0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.5), inset 0 0 10px rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+  50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.8), inset 0 0 15px rgba(239, 68, 68, 0.4); border-color: #fca5a5; }
+}
+
 
 /* Success Tick Draw */
 @keyframes codex-check-draw {
