@@ -1,250 +1,257 @@
-# Codex - Problem Topic Extractor
+# 👁️ Codex - Problem Topic Extractor
 
-<p align="center">
-  <img src="codeex/icons/icon128.svg" alt="Codex Logo" width="128" height="128">
-</p>
+<div align="center">
 
-<p align="center">
-  <strong>A Chrome Extension for DSA Problem Tracking</strong><br>
-  Seamlessly extract and sync coding problems from LeetCode, GeeksForGeeks, and InterviewBit to your CPCoders dashboard.
-</p>
+![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Chrome](https://img.shields.io/badge/chrome-extension-yellow.svg)
+![Manifest](https://img.shields.io/badge/manifest-v3-orange.svg)
 
-<p align="center">
-  <a href="https://cp.saksin.online">🌐 CPCoders Dashboard</a> •
-  <a href="#installation">📦 Installation</a> •
-  <a href="#features">✨ Features</a> •
-  <a href="#usage">📖 Usage</a>
-</p>
+**🚀 One-Click DSA Problem Tracking for Competitive Programmers**
+
+[🌐 Open CPCoders Dashboard](https://cp.saksin.online) · [📖 How to Use](#-quick-start) · [🐛 Report Bug](https://github.com/yourusername/codex/issues)
 
 ---
 
-## 🎯 What is Codex?
+<img src="https://img.shields.io/badge/LeetCode-FFA116?style=for-the-badge&logo=leetcode&logoColor=black" alt="LeetCode"/>
+<img src="https://img.shields.io/badge/GeeksforGeeks-2F8D46?style=for-the-badge&logo=geeksforgeeks&logoColor=white" alt="GFG"/>
+<img src="https://img.shields.io/badge/InterviewBit-1A73E8?style=for-the-badge&logo=interviewbit&logoColor=white" alt="InterviewBit"/>
 
-**Codex** is a browser extension that works alongside the [CPCoders Dashboard](https://cp.saksin.online) - a comprehensive platform for managing your DSA (Data Structures & Algorithms) problem-solving journey.
-
-When you're solving problems on coding platforms like LeetCode, GeeksForGeeks, or InterviewBit, Codex automatically extracts problem details and syncs them to your personal dashboard with just one click.
-
----
-
-## ✨ Features
-
-### 🔍 Problem Extraction
-- **One-Click Capture**: Click the floating eye icon to instantly capture problem details
-- **Auto-Detection**: Automatically detects problem name, number, difficulty, and topics
-- **Multi-Platform Support**: Works on LeetCode, GeeksForGeeks, and InterviewBit
-
-### 📊 Data Captured
-| Field | Description |
-|-------|-------------|
-| Problem Name | Full problem title |
-| Problem Number | Unique problem identifier |
-| Difficulty | Easy / Medium / Hard |
-| Topics | Algorithm/DS tags (Array, DP, Trees, etc.) |
-| Company Tags | Companies that asked this problem |
-| Solved Status | Whether you've solved the problem |
-| Problem URL | Direct link to the problem |
-
-### 🔄 Seamless Sync
-- **Real-time Sync**: Problems are instantly synced to your CPCoders dashboard
-- **Upsert Logic**: Automatically creates new entries or updates existing ones
-- **Visual Feedback**: Animated icon shows success (✓) or error (✗) status
-
-### 🎨 Beautiful UI
-- **Floating Eye Icon**: Draggable icon that stays out of your way
-- **Animated Feedback**: Smooth animations for all interactions
-- **Dark Theme**: Matches modern coding platforms
+</div>
 
 ---
 
-## 📦 Installation
+## 🎬 What is Codex?
 
-### Method 1: Load Unpacked (Developer Mode)
+**Codex** is a Chrome extension that supercharges your DSA preparation by automatically capturing problems from popular coding platforms and syncing them to your personal **[CPCoders Dashboard](https://cp.saksin.online)**.
 
-1. **Download/Clone the Repository**
+> 💡 **Stop manually tracking problems!** Let Codex do the work while you focus on solving.
+
+---
+
+## ⚡ Quick Start
+
+Getting started takes less than 2 minutes!
+
+### Step 1: Install the Extension
+
+```
+📁 Download → 🧩 Load in Chrome → ✅ Done!
+```
+
+1. **Clone or Download** this repository
    ```bash
    git clone https://github.com/yourusername/codex.git
    ```
 
 2. **Open Chrome Extensions**
-   - Navigate to `chrome://extensions/`
-   - Or go to Menu → More Tools → Extensions
+   - Go to `chrome://extensions/` in your browser
+   - Enable **Developer Mode** (toggle in top-right)
 
-3. **Enable Developer Mode**
-   - Toggle the "Developer mode" switch in the top-right corner
+3. **Load the Extension**
+   - Click **"Load unpacked"**
+   - Select the `codeex` folder
 
-4. **Load the Extension**
-   - Click "Load unpacked"
-   - Select the `codeex` folder from this repository
-
-5. **Pin the Extension** (Optional)
-   - Click the puzzle piece icon in Chrome toolbar
-   - Pin "Codex - Problem Topic Extractor"
+4. **Pin it** (optional but recommended)
+   - Click the puzzle icon 🧩 in Chrome toolbar
+   - Pin **"Codex - Problem Topic Extractor"**
 
 ---
 
-## 🔐 Authentication Setup
+### Step 2: Connect to CPCoders
 
-Codex requires authentication with your CPCoders account to sync problems.
+```
+🌐 Login → 🔄 Refresh → ✅ Connected!
+```
 
-### Step 1: Create an Account
-1. Visit [cp.saksin.online](https://cp.saksin.online)
-2. Sign up or log in to your account
+1. **Go to** [cp.saksin.online](https://cp.saksin.online)
+2. **Login** to your account (or create one)
+3. **Refresh** the page
+4. **Done!** The floating eye icon will show a ✅ green checkmark
 
-### Step 2: Connect the Extension
-1. After logging in, go to your **Profile** page
-2. Click on **"Connect Extension"** or navigate to the token page
-3. The extension will automatically detect your authentication
-4. You'll see a **green checkmark animation** on the floating icon confirming successful connection
-
-### Step 3: Verify Connection
-- The floating eye icon on `cp.saksin.online` shows connection status:
-  - ✅ **Green pulse**: Successfully connected
-  - ❌ **Red X + "Reconnect" link**: Connection issue - click to re-authenticate
+> 🎉 That's it! The extension automatically syncs your authentication. No extra steps needed!
 
 ---
 
-## 📖 Usage
+### Step 3: Start Capturing Problems
 
-### On Coding Platforms (LeetCode, GFG, InterviewBit)
+```
+📝 Open Problem → 👁️ Click Eye → 🚀 Synced!
+```
 
-1. **Navigate to a Problem Page**
-   - Open any problem on LeetCode, GeeksForGeeks, or InterviewBit
+1. Go to any problem on **LeetCode**, **GeeksForGeeks**, or **InterviewBit**
+2. Look for the **floating eye icon** (bottom-right corner)
+3. **Click it** to capture & sync the problem
+4. Check your dashboard at [cp.saksin.online/problems](https://cp.saksin.online/problems)
 
-2. **Look for the Floating Eye Icon**
-   - A circular eye icon appears in the bottom-right corner
-   - You can drag it anywhere on the screen
+---
 
-3. **Click to Capture**
-   - Click the eye icon to extract and sync the problem
-   - **Green animation** = New problem saved
-   - **Yellow animation** = Existing problem updated
-   - **Red animation** = Error (check authentication)
+## ✨ Features
 
-4. **View on Dashboard**
-   - Visit [cp.saksin.online/problems](https://cp.saksin.online/problems) to see all your captured problems
+<table>
+<tr>
+<td width="50%">
 
-### On CPCoders Dashboard
+### 🎯 Smart Extraction
+- Problem name & number
+- Difficulty level
+- Topic tags (Array, DP, Trees...)
+- Company tags
+- Solved/Unsolved status
+- Direct problem URL
 
-- The floating icon appears on the left side (near sidebar)
-- It shows your extension connection status
-- Click for status information
+</td>
+<td width="50%">
+
+### 🔄 Seamless Sync
+- One-click capture
+- Auto upsert (create or update)
+- Real-time sync to dashboard
+- Works offline (queues sync)
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🎨 Beautiful UI
+- Animated floating eye icon
+- Draggable anywhere on screen
+- Visual success/error feedback
+- Dark theme compatible
+
+</td>
+<td width="50%">
+
+### 🔐 Secure Auth
+- Auto token sync
+- Secure storage
+- One-time setup
+- No manual token copying
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🎨 Visual Feedback
+
+The floating eye icon tells you everything:
+
+| Animation | Meaning |
+|:---------:|---------|
+| 🔵 **Blue Pulse** | Ready to capture |
+| ✅ **Green Check** | Problem saved successfully |
+| 🟡 **Yellow Check** | Problem updated |
+| ❌ **Red X** | Error - click "Reconnect" link |
+| 💜 **Purple Glow** | On CPCoders dashboard |
 
 ---
 
 ## 🌐 Supported Platforms
 
-| Platform | URL | Features |
-|----------|-----|----------|
-| **LeetCode** | leetcode.com | Problem name, number, topics, difficulty, solved status |
-| **GeeksForGeeks** | geeksforgeeks.org | Problem name, topics, difficulty, company tags |
-| **InterviewBit** | interviewbit.com | Problem name, topics, difficulty, company tags |
+| Platform | What's Captured |
+|:--------:|-----------------|
+| <img src="https://leetcode.com/favicon.ico" width="20"/> **LeetCode** | Name, Number, Topics, Difficulty, Solved Status |
+| <img src="https://www.geeksforgeeks.org/favicon.ico" width="20"/> **GeeksForGeeks** | Name, Topics, Difficulty, Company Tags |
+| <img src="https://www.interviewbit.com/favicon.ico" width="20"/> **InterviewBit** | Name, Topics, Difficulty, Company Tags |
 
 ---
 
-## 🏗️ Project Structure
+## 📁 Project Structure
 
 ```
 codex/
-├── codeex/                    # Extension source code
-│   ├── manifest.json          # Chrome extension manifest (MV3)
-│   ├── popup.html             # Extension popup UI
-│   ├── popup.css              # Popup styles
-│   ├── popup.js               # Popup logic
-│   ├── content.css            # Content script styles
-│   ├── icons/                 # Extension icons
-│   │   ├── icon16.svg
-│   │   ├── icon48.svg
-│   │   └── icon128.svg
-│   └── modules/               # Core modules
-│       ├── namespace.js       # Global Codex namespace
-│       ├── main.js            # Entry point & orchestrator
-│       ├── extractor.js       # Platform detection & delegation
-│       ├── api.js             # Backend API communication
-│       ├── icon.js            # Floating eye icon & animations
-│       ├── panel.js           # Info panel UI
-│       ├── styles.js          # Dynamic styling
-│       ├── auth-sync.js       # Authentication sync for dashboard
-│       └── extractors/        # Platform-specific extractors
-│           ├── leetcode.js    # LeetCode extractor
-│           ├── gfg.js         # GeeksForGeeks extractor
-│           └── interviewbit.js # InterviewBit extractor
-├── make.txt                   # Build/development notes
-└── README.md                  # This file
+├── 📄 README.md
+├── 📄 LICENSE
+└── 📁 codeex/                    # Extension source
+    ├── 📄 manifest.json          # Chrome MV3 manifest
+    ├── 📄 popup.html/css/js      # Extension popup
+    ├── 📄 content.css            # Injected styles
+    ├── 📁 icons/                 # Extension icons
+    └── 📁 modules/
+        ├── 📄 namespace.js       # Global namespace
+        ├── 📄 main.js            # Entry point
+        ├── 📄 extractor.js       # Platform router
+        ├── 📄 api.js             # Backend API
+        ├── 📄 icon.js            # Floating icon
+        ├── 📄 panel.js           # Info panel
+        ├── 📄 styles.js          # Dynamic styles
+        ├── 📄 auth-sync.js       # Auth sync
+        └── 📁 extractors/
+            ├── 📄 leetcode.js
+            ├── 📄 gfg.js
+            └── 📄 interviewbit.js
 ```
 
 ---
 
-## 🔧 Technical Details
+## 🔧 Tech Stack
 
-### Manifest V3
-This extension uses Chrome's Manifest V3 for enhanced security and performance.
-
-### API Endpoints
-- **Backend**: `https://cpbackend.saksin.online/api`
-- **Frontend Dashboard**: `https://cp.saksin.online`
-
-### Permissions
-| Permission | Purpose |
-|------------|---------|
-| `activeTab` | Access current tab content |
-| `scripting` | Inject content scripts |
-| `storage` | Store authentication token |
-
-### Host Permissions
-- `https://cp.saksin.online/*` - Dashboard integration
-- `https://cpbackend.saksin.online/*` - API communication
+- **Extension**: Chrome Manifest V3
+- **Frontend**: Vanilla JS (no dependencies!)
+- **Backend**: [cpbackend.saksin.online](https://cpbackend.saksin.online)
+- **Dashboard**: [cp.saksin.online](https://cp.saksin.online)
 
 ---
 
-## 🐛 Troubleshooting
+## ❓ Troubleshooting
 
-### Extension Icon Not Showing
-- Make sure you're on a supported problem page (not the problem list)
-- Refresh the page after installing the extension
-- Check if the extension is enabled in `chrome://extensions`
+<details>
+<summary><b>🔴 Eye icon not appearing?</b></summary>
 
-### "Reconnect Extension" Error
-1. Visit [cp.saksin.online](https://cp.saksin.online)
-2. Log out and log back in
-3. Go to Profile → Connect Extension
-4. Refresh the coding platform page
+- Make sure you're on a **problem page** (not the problem list)
+- Refresh the page after installing
+- Check if extension is enabled in `chrome://extensions`
+</details>
 
-### Problems Not Syncing
+<details>
+<summary><b>🔴 "Reconnect Extension" error?</b></summary>
+
+1. Go to [cp.saksin.online](https://cp.saksin.online)
+2. Make sure you're logged in
+3. Refresh the page
+4. Go back to the coding platform and refresh
+</details>
+
+<details>
+<summary><b>🔴 Problems not syncing?</b></summary>
+
 - Check your internet connection
-- Verify you're logged in to CPCoders dashboard
-- Look for error messages in the browser console (F12 → Console)
-
-### Icon Not Draggable
-- The icon becomes draggable after holding click for a moment
-- Quick clicks trigger the capture action
+- Verify you're logged in to CPCoders
+- Open browser console (F12) for error details
+</details>
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Feel free to:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. 🍴 Fork the repository
+2. 🌿 Create a feature branch
+3. 💻 Make your changes
+4. 📤 Submit a Pull Request
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🔗 Links
+<div align="center">
 
-- **CPCoders Dashboard**: [cp.saksin.online](https://cp.saksin.online)
-- **Report Issues**: [GitHub Issues](https://github.com/yourusername/codex/issues)
+### 🔗 Quick Links
+
+[🌐 CPCoders Dashboard](https://cp.saksin.online) · [📊 Your Problems](https://cp.saksin.online/problems) · [👤 Profile](https://cp.saksin.online/profile)
 
 ---
 
-<p align="center">
-  Made with ❤️ for the competitive programming community
-</p>
+**Made with ❤️ for Competitive Programmers**
+
+⭐ Star this repo if you find it helpful!
+
+</div>
