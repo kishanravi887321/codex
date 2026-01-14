@@ -9,10 +9,76 @@
   var Codex = window.Codex;
 
   /**
-   * Extract problem data from InterviewBit page
+   * Extract topic from breadcrumb
+   * @returns {string|null} Topic name or null
+   */
+  function extractTopicFromBreadcrumb() {
+    // Select all breadcrumb links
+    var links = document.querySelectorAll(".ib-breadcrumb a.ib-breadcrumb__item--link");
+    if (links && links.length > 0) {
+      // Get the last link (most specific topic like "Dynamic Programming" or "Linked Lists")
+      var lastLink = links[links.length - 1];
+      var text = lastLink.innerText.trim();
+      // Only filter out if it's EXACTLY "Programming" (not "Dynamic Programming")
+      if (text && text.toLowerCase() !== 'programming') {
+        return text;
+      }
+      // If last is exactly "Programming", try second to last
+      if (links.length > 1) {
+        text = links[links.length - 2].innerText.trim();
+        if (text && text.toLowerCase() !== 'programming') {
+          return text;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Wait for topic to appear in DOM using MutationObserver
+   * @param {number} timeout - Max time to wait in ms
+   * @returns {Promise<string|null>} Topic name or null
+   */
+  function waitForTopic(timeout) {
+    timeout = timeout || 3000;
+    
+    return new Promise(function(resolve) {
+      // First check if already present
+      var topic = extractTopicFromBreadcrumb();
+      if (topic) {
+        resolve(topic);
+        return;
+      }
+
+      var resolved = false;
+      
+      var observer = new MutationObserver(function() {
+        var topic = extractTopicFromBreadcrumb();
+        if (topic && !resolved) {
+          resolved = true;
+          observer.disconnect();
+          resolve(topic);
+        }
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      // Timeout fallback
+      setTimeout(function() {
+        if (!resolved) {
+          resolved = true;
+          observer.disconnect();
+          resolve(null);
+        }
+      }, timeout);
+    });
+  }
+
+  /**
+   * Extract problem data from InterviewBit page (sync version for immediate data)
    * @returns {Object} Problem data object
    */
-  function extract() {
+  function extractSync() {
     var data = {
       number: null,
       name: null,
@@ -237,11 +303,33 @@
     return match ? match[1] : null;
   }
 
+  /**
+   * Async extract function that waits for React-rendered content
+   * @returns {Promise<Object>} Problem data object
+   */
+  async function extract() {
+    // Get sync data first
+    var data = extractSync();
+    
+    // If topics not found, wait for React to render breadcrumb
+    if (data.topics.length === 0) {
+      Codex.utils.log('InterviewBit: Waiting for breadcrumb to render...');
+      var topic = await waitForTopic(3000);
+      if (topic) {
+        data.topics = [topic];
+        Codex.utils.log('InterviewBit: Topic found after wait:', topic);
+      }
+    }
+    
+    return data;
+  }
+
   // Register platform extractor
   Codex.extractors = Codex.extractors || {};
   Codex.extractors.interviewbit = {
     name: 'InterviewBit',
     extract: extract,
+    extractSync: extractSync,
     isProblemPage: isProblemPage,
     getProblemSlug: getProblemSlug
   };

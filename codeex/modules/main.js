@@ -93,8 +93,8 @@
     }
 
     try {
-      // 1. Extract Data
-      var data = Codex.modules.extractor.extract();
+      // 1. Extract Data (await for async extractors like InterviewBit)
+      var data = await Codex.modules.extractor.extract();
       
       if (!data || !data.name) {
         Codex.utils.log('No problem data found');

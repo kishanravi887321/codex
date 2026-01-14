@@ -29,7 +29,7 @@
   function getStatus(problemData) {
     // InterviewBit always sends "For Future"
     if (problemData.platform === 'interviewbit') {
-      return 'For Future';
+      return 'for-future';
     }
     // Other platforms use solved/unsolved
     return problemData.solved ? 'solved' : 'unsolved';

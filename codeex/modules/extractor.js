@@ -45,13 +45,14 @@
   /**
    * Extract problem data from the current page
    * Delegates to platform-specific extractor
-   * @returns {Object} Problem data object
+   * @returns {Promise<Object>} Problem data object
    */
-  function extractProblemData() {
+  async function extractProblemData() {
     var extractor = getExtractor();
     
     if (extractor && typeof extractor.extract === 'function') {
-      var data = extractor.extract();
+      // Handle both sync and async extractors
+      var data = await Promise.resolve(extractor.extract());
       Codex.utils.log('Extracted data from ' + extractor.name + ':', data);
       return data;
     }
