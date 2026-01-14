@@ -10,6 +10,69 @@
   var currentIcon = null;
 
   /**
+   * Check if current page is the CPCoders dashboard
+   */
+  function isCPCodersDashboard() {
+    return window.location.hostname === 'cp.saksin.online';
+  }
+
+  /**
+   * Generate the CPCoders dashboard-style SVG icon
+   * Matches the branding shown in the dashboard UI
+   */
+  function generateDashboardSVG() {
+    return `
+      <svg width="40" height="40" viewBox="0 0 48 48" fill="none" class="codex-dashboard-eye">
+        <!-- Outer glow ring -->
+        <circle cx="24" cy="24" r="22" fill="none" stroke="url(#dashboard-ring-gradient)" stroke-width="2" opacity="0.6">
+          <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Main eye shape - outer -->
+        <ellipse cx="24" cy="24" rx="18" ry="11" fill="none" stroke="url(#dashboard-eye-gradient)" stroke-width="2.5" stroke-linecap="round"/>
+        
+        <!-- Inner eye fill -->
+        <ellipse cx="24" cy="24" rx="16" ry="9" fill="rgba(15, 10, 30, 0.9)"/>
+        
+        <!-- Iris with gradient -->
+        <circle cx="24" cy="24" r="8" fill="url(#dashboard-iris-gradient)">
+          <animate attributeName="r" values="8;8.5;8" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Inner iris ring -->
+        <circle cx="24" cy="24" r="6" fill="none" stroke="rgba(168, 85, 247, 0.4)" stroke-width="1"/>
+        
+        <!-- Pupil -->
+        <circle cx="24" cy="24" r="3.5" fill="#0a0a0f"/>
+        
+        <!-- Pupil highlights -->
+        <circle cx="22.5" cy="22.5" r="1.5" fill="white" opacity="0.9"/>
+        <circle cx="26" cy="25" r="0.8" fill="white" opacity="0.5"/>
+        
+        <!-- Gradient definitions -->
+        <defs>
+          <linearGradient id="dashboard-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#a855f7"/>
+            <stop offset="50%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
+          </linearGradient>
+          <linearGradient id="dashboard-eye-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#c084fc"/>
+            <stop offset="50%" stop-color="#a855f7"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </linearGradient>
+          <radialGradient id="dashboard-iris-gradient" cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#c084fc"/>
+            <stop offset="40%" stop-color="#a855f7"/>
+            <stop offset="70%" stop-color="#7c3aed"/>
+            <stop offset="100%" stop-color="#5b21b6"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    `;
+  }
+
+  /**
    * Generate the animated eye SVG
    */
   function generateEyeSVG() {
@@ -116,16 +179,37 @@
   function create() {
     var icon = document.createElement('div');
     icon.id = 'codex-floating-icon';
-    icon.innerHTML = generateEyeSVG();
     
-    // Base styles
-    icon.style.cssText = 'position:fixed;width:60px;height:60px;' +
-      'background:radial-gradient(circle at 30% 30%, #1e293b, #0f172a, #030712);' +
-      'border-radius:50%;display:flex;align-items:center;justify-content:center;' +
-      'cursor:grab;z-index:2147483647;border:2px solid rgba(59,130,246,0.5);' +
-      'will-change:transform;user-select:none;transition:transform 0.3s ease;';
-    icon.style.right = '30px';
-    icon.style.bottom = '100px';
+    // Use dashboard-style icon on cp.saksin.online, regular eye on other platforms
+    if (isCPCodersDashboard()) {
+      icon.innerHTML = generateDashboardSVG();
+      icon.classList.add('codex-dashboard-mode');
+      
+      // Dashboard-specific styles with purple/violet theme
+      icon.style.cssText = 'position:fixed;width:60px;height:60px;' +
+        'background:radial-gradient(circle at 30% 30%, #1e1033, #0f0a1a, #050208);' +
+        'border-radius:50%;display:flex;align-items:center;justify-content:center;' +
+        'cursor:grab;z-index:2147483647;border:2px solid rgba(168, 85, 247, 0.6);' +
+        'box-shadow:0 4px 25px rgba(139, 92, 246, 0.4), inset 0 0 20px rgba(139, 92, 246, 0.1);' +
+        'will-change:transform;user-select:none;transition:transform 0.3s ease, box-shadow 0.3s ease;';
+      
+      // Dashboard position: left side, near bottom of sidebar (matching screenshot)
+      icon.style.left = '9px';
+      icon.style.top = '16px';
+    } else {
+      icon.innerHTML = generateEyeSVG();
+      
+      // Base styles for coding platforms
+      icon.style.cssText = 'position:fixed;width:60px;height:60px;' +
+        'background:radial-gradient(circle at 30% 30%, #1e293b, #0f172a, #030712);' +
+        'border-radius:50%;display:flex;align-items:center;justify-content:center;' +
+        'cursor:grab;z-index:2147483647;border:2px solid rgba(59,130,246,0.5);' +
+        'will-change:transform;user-select:none;transition:transform 0.3s ease;';
+      
+      // Other platforms: bottom-right position
+      icon.style.right = '30px';
+      icon.style.bottom = '100px';
+    }
     
     currentIcon = icon;
     return icon;
@@ -277,9 +361,17 @@
    */
   function resetIcon() {
     if (!currentIcon) return;
-    currentIcon.innerHTML = generateEyeSVG();
-    currentIcon.style.animation = 'codex-border-glow 8s ease-in-out infinite';
-    currentIcon.style.borderColor = 'rgba(59,130,246,0.5)';
+    
+    // Use appropriate icon and styles based on current site
+    if (isCPCodersDashboard()) {
+      currentIcon.innerHTML = generateDashboardSVG();
+      currentIcon.style.animation = 'codex-dashboard-border-glow 4s ease-in-out infinite';
+      currentIcon.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+    } else {
+      currentIcon.innerHTML = generateEyeSVG();
+      currentIcon.style.animation = 'codex-border-glow 8s ease-in-out infinite';
+      currentIcon.style.borderColor = 'rgba(59,130,246,0.5)';
+    }
     
     // Remove reconnect label if exists
     var label = document.getElementById('codex-reconnect-label');
@@ -410,6 +502,8 @@
     setPosition: setPosition,
     getPosition: getPosition,
     generateEyeSVG: generateEyeSVG,
+    generateDashboardSVG: generateDashboardSVG,
+    isCPCodersDashboard: isCPCodersDashboard,
     triggerAuthSuccess: triggerAuthSuccess,
     triggerAuthFailure: triggerAuthFailure,
     showSuccess: showSuccess,

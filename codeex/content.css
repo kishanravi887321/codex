@@ -245,6 +245,45 @@
   animation: codex-electric-arc 0.3s linear infinite;
 }
 
+/* ============================================
+   DASHBOARD MODE STYLES (cp.saksin.online)
+   ============================================ */
+
+/* Dashboard mode base animation */
+#codex-floating-icon.codex-dashboard-mode {
+  animation: codex-dashboard-border-glow 4s ease-in-out infinite;
+}
+
+@keyframes codex-dashboard-border-glow {
+  0%, 100% { 
+    border-color: rgba(168, 85, 247, 0.6); 
+    box-shadow: 0 4px 25px rgba(139, 92, 246, 0.4), inset 0 0 20px rgba(139, 92, 246, 0.1); 
+  }
+  50% { 
+    border-color: rgba(124, 58, 237, 0.8); 
+    box-shadow: 0 4px 30px rgba(168, 85, 247, 0.6), inset 0 0 25px rgba(168, 85, 247, 0.15); 
+  }
+}
+
+/* Dashboard mode hover state */
+#codex-floating-icon.codex-dashboard-mode:hover {
+  animation: none !important;
+  border-color: rgba(192, 132, 252, 0.9) !important;
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.8), 
+              0 0 60px rgba(139, 92, 246, 0.5), 
+              inset 0 0 30px rgba(124, 58, 237, 0.3) !important;
+}
+
+/* Dashboard eye subtle pulse on hover */
+#codex-floating-icon.codex-dashboard-mode:hover .codex-dashboard-eye {
+  animation: codex-dashboard-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes codex-dashboard-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(168, 85, 247, 0.6)); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.9)); }
+}
+
 /* Hover pulse ring */
 .codex-icon-container:hover .codex-pulse-ring {
   animation: codex-hover-pulse-ring 2s ease-out infinite;
