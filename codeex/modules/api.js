@@ -39,7 +39,7 @@
         questName: problemData.name,
         questNumber: problemData.number,
         questLink: problemData.url,
-        platform: 'leetcode',
+        platform: problemData.platform || 'leetcode',
         difficulty: (problemData.difficulty || 'medium').toLowerCase(),
         topics: problemData.topics || [],
         status: problemData.solved ? 'solved' : 'unsolved',

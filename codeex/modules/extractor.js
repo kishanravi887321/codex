@@ -1,78 +1,73 @@
 /**
  * Codex Extractor Module
- * Handles extraction of problem data from LeetCode pages
+ * Universal extractor that delegates to platform-specific extractors
+ * Supports: LeetCode, GeeksForGeeks, InterviewBit
  */
 
 (function() {
   'use strict';
 
   var Codex = window.Codex;
+  
+  // Initialize extractors registry if not exists
+  Codex.extractors = Codex.extractors || {};
+
+  /**
+   * Detect current platform based on URL
+   * @returns {string|null} Platform identifier
+   */
+  function detectPlatform() {
+    var hostname = window.location.hostname.toLowerCase();
+    
+    if (hostname.includes('leetcode')) {
+      return 'leetcode';
+    } else if (hostname.includes('geeksforgeeks') || hostname.includes('gfg')) {
+      return 'gfg';
+    } else if (hostname.includes('interviewbit')) {
+      return 'interviewbit';
+    }
+    
+    return null;
+  }
+
+  /**
+   * Get the appropriate extractor for current platform
+   * @returns {Object|null} Platform extractor
+   */
+  function getExtractor() {
+    var platform = detectPlatform();
+    if (platform && Codex.extractors[platform]) {
+      return Codex.extractors[platform];
+    }
+    return null;
+  }
 
   /**
    * Extract problem data from the current page
+   * Delegates to platform-specific extractor
    * @returns {Object} Problem data object
    */
   function extractProblemData() {
-    var data = {
+    var extractor = getExtractor();
+    
+    if (extractor && typeof extractor.extract === 'function') {
+      var data = extractor.extract();
+      Codex.utils.log('Extracted data from ' + extractor.name + ':', data);
+      return data;
+    }
+    
+    // Fallback empty data if no extractor found
+    Codex.utils.log('No extractor found for current platform');
+    return {
       number: null,
       name: null,
-      url: null,
+      url: window.location.href,
       topics: [],
       solved: false,
       difficulty: null,
+      platform: 'unknown',
       timestamp: new Date().toISOString()
     };
-
-    // Extract question info using semantic selector
-    var titleAnchor = document.querySelector('div.text-title-large a[href^="/problems/"]');
-    
-    if (titleAnchor) {
-      var fullText = titleAnchor.innerText.trim();
-      var href = titleAnchor.getAttribute('href');
-      
-      data.url = 'https://leetcode.com' + href;
-      
-      // Parse question number and name (format: "85. Maximal Rectangle")
-      var match = fullText.match(/^(\d+)\.\s+(.*)$/);
-      if (match) {
-        data.number = match[1];
-        data.name = match[2];
-      } else {
-        data.name = fullText;
-      }
-    }
-
-    // Extract topics using semantic selector
-    var topicElements = document.querySelectorAll('a[href^="/tag/"]');
-    var topics = [];
-    for (var i = 0; i < topicElements.length; i++) {
-      var text = topicElements[i].innerText.trim();
-      if (text.length > 0 && topics.indexOf(text) === -1) {
-        topics.push(text);
-      }
-    }
-    data.topics = topics;
-
-    // Check solved status - search for div with exact "Solved" text
-    var allDivs = document.querySelectorAll('div');
-    for (var j = 0; j < allDivs.length; j++) {
-      if (allDivs[j].innerText.trim() === 'Solved') {
-        data.solved = true;
-        break;
-      }
-    }
-
-    // Extract difficulty if available
-    var difficultyElement = document.querySelector('[class*="difficulty"]');
-    if (difficultyElement) {
-      var diffText = difficultyElement.innerText.trim().toLowerCase();
-      if (diffText.includes('easy')) data.difficulty = 'Easy';
-      else if (diffText.includes('medium')) data.difficulty = 'Medium';
-      else if (diffText.includes('hard')) data.difficulty = 'Hard';
-    }
-
-    Codex.utils.log('Extracted data:', data);
-    return data;
   }
 
   /**
@@ -80,8 +75,11 @@
    * @returns {boolean}
    */
   function isProblemPage() {
-    return window.location.pathname.includes('/problems/') && 
-           !window.location.pathname.includes('/problemset/');
+    var extractor = getExtractor();
+    if (extractor && typeof extractor.isProblemPage === 'function') {
+      return extractor.isProblemPage();
+    }
+    return false;
   }
 
   /**
@@ -89,16 +87,39 @@
    * @returns {string|null}
    */
   function getProblemSlug() {
-    var match = window.location.pathname.match(/\/problems\/([^\/]+)/);
-    return match ? match[1] : null;
+    var extractor = getExtractor();
+    if (extractor && typeof extractor.getProblemSlug === 'function') {
+      return extractor.getProblemSlug();
+    }
+    return null;
+  }
+
+  /**
+   * Get current platform name
+   * @returns {string}
+   */
+  function getCurrentPlatform() {
+    return detectPlatform() || 'unknown';
+  }
+
+  /**
+   * Get list of supported platforms
+   * @returns {Array<string>}
+   */
+  function getSupportedPlatforms() {
+    return Object.keys(Codex.extractors);
   }
 
   // Register module
   Codex.modules.extractor = {
     extract: extractProblemData,
     isProblemPage: isProblemPage,
-    getProblemSlug: getProblemSlug
+    getProblemSlug: getProblemSlug,
+    detectPlatform: detectPlatform,
+    getCurrentPlatform: getCurrentPlatform,
+    getSupportedPlatforms: getSupportedPlatforms,
+    getExtractor: getExtractor
   };
 
-  Codex.utils.log('Extractor module loaded');
+  Codex.utils.log('Universal Extractor module loaded');
 })();

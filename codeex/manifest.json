@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Codex - Problem Topic Extractor",
-  "version": "1.1.0",
-  "description": "Extract problem topics from coding platforms like LeetCode",
+  "version": "1.2.0",
+  "description": "Extract problem topics from coding platforms like LeetCode, GeeksForGeeks, and InterviewBit",
   "permissions": [
     "activeTab",
     "scripting",
@@ -33,6 +33,46 @@
       ],
       "js": [
         "modules/namespace.js",
+        "modules/extractors/leetcode.js",
+        "modules/extractor.js",
+        "modules/styles.js",
+        "modules/panel.js",
+        "modules/icon.js",
+        "modules/api.js",
+        "modules/main.js"
+      ],
+      "css": ["content.css"],
+      "run_at": "document_end",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "*://www.geeksforgeeks.org/*",
+        "*://practice.geeksforgeeks.org/*",
+        "*://geeksforgeeks.org/*"
+      ],
+      "js": [
+        "modules/namespace.js",
+        "modules/extractors/gfg.js",
+        "modules/extractor.js",
+        "modules/styles.js",
+        "modules/panel.js",
+        "modules/icon.js",
+        "modules/api.js",
+        "modules/main.js"
+      ],
+      "css": ["content.css"],
+      "run_at": "document_end",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "*://www.interviewbit.com/*",
+        "*://interviewbit.com/*"
+      ],
+      "js": [
+        "modules/namespace.js",
+        "modules/extractors/interviewbit.js",
         "modules/extractor.js",
         "modules/styles.js",
         "modules/panel.js",
