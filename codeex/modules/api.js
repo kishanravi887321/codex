@@ -22,6 +22,20 @@
   }
 
   /**
+   * Determine the status based on platform and solved state
+   * @param {Object} problemData 
+   * @returns {string} Status string
+   */
+  function getStatus(problemData) {
+    // InterviewBit always sends "For Future"
+    if (problemData.platform === 'interviewbit') {
+      return 'For Future';
+    }
+    // Other platforms use solved/unsolved
+    return problemData.solved ? 'solved' : 'unsolved';
+  }
+
+  /**
    * Upsert problem to the backend
    * @param {Object} problemData 
    * @returns {Promise<Object>} { success: boolean, status: 'created'|'updated' }
@@ -42,7 +56,7 @@
         platform: problemData.platform || 'leetcode',
         difficulty: (problemData.difficulty || 'medium').toLowerCase(),
         topics: problemData.topics || [],
-        status: problemData.solved ? 'solved' : 'unsolved',
+        status: getStatus(problemData),
         // Optional fields
         notes: '',
         bookmarked: false

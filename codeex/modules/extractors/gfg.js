@@ -9,6 +9,31 @@
   var Codex = window.Codex;
 
   /**
+   * Helper function to get tags from GFG accordion sections
+   * @param {string} keyword - The keyword to search for (e.g., "Company Tags", "Topic Tags")
+   * @returns {Array} Array of tag strings
+   */
+  function getGfgAccordionTags(keyword) {
+    try {
+      var strongs = Array.from(document.querySelectorAll("strong"));
+      var target = strongs.find(function(el) { 
+        return el.innerText.includes(keyword); 
+      });
+      if (target) {
+        // Find the accordion title container
+        var container = target.closest('[class*="title"]'); 
+        if (container && container.nextElementSibling) {
+          var links = container.nextElementSibling.querySelectorAll("a");
+          return Array.from(links).map(function(l) { return l.innerText.trim(); });
+        }
+      }
+    } catch(e) {
+      Codex.utils.log('Error extracting GFG accordion tags:', e);
+    }
+    return [];
+  }
+
+  /**
    * Extract problem data from GFG page
    * @returns {Object} Problem data object
    */
@@ -21,12 +46,13 @@
       solved: false,
       difficulty: null,
       platform: 'gfg',
+      companyTags: [],
       timestamp: new Date().toISOString()
     };
 
-    // Extract problem name from GFG
-    // GFG uses different selectors for problem titles
-    var titleElement = document.querySelector('h3.problems_header_content__title__L2cB2') ||
+    // Extract problem name from GFG using specific selector
+    var titleElement = document.querySelector("[class*='problems_header_content__title'] h3") ||
+                       document.querySelector('h3.problems_header_content__title__L2cB2') ||
                        document.querySelector('.problems_header_content__title') ||
                        document.querySelector('.problem-title') ||
                        document.querySelector('h1') ||
@@ -47,8 +73,9 @@
       }
     }
 
-    // Extract difficulty from GFG
-    var difficultyElement = document.querySelector('.problems_header_content__difficulty__FJgoD') ||
+    // Extract difficulty from GFG using specific selector
+    var difficultyElement = document.querySelector("[class*='problems_header_description'] strong") ||
+                            document.querySelector('.problems_header_content__difficulty__FJgoD') ||
                             document.querySelector('.problem-difficulty') ||
                             document.querySelector('[class*="difficulty"]') ||
                             document.querySelector('.diff-badge');
@@ -66,24 +93,28 @@
       }
     }
 
-    // Extract topics/tags from GFG
-    var topicElements = document.querySelectorAll('.problems_tag_container__kWANg a') ||
-                        document.querySelectorAll('.problem-tag') ||
-                        document.querySelectorAll('[class*="tag"]') ||
-                        document.querySelectorAll('.topic-tag');
-
-    if (topicElements && topicElements.length > 0) {
-      var topics = [];
-      for (var i = 0; i < topicElements.length; i++) {
-        var text = topicElements[i].innerText.trim();
-        if (text.length > 0 && text.length < 50 && topics.indexOf(text) === -1) {
-          topics.push(text);
-        }
-      }
-      data.topics = topics;
+    // Extract Topic Tags from GFG accordion
+    var topicTags = getGfgAccordionTags("Topic Tags");
+    if (topicTags.length > 0) {
+      data.topics = topicTags;
     }
 
-    // Alternative topic extraction - look for company tags or topic pills
+    // Fallback: Extract topics/tags from other selectors
+    if (data.topics.length === 0) {
+      var topicElements = document.querySelectorAll('.problems_tag_container__kWANg a, .problem-tag, [class*="tag"], .topic-tag');
+      if (topicElements && topicElements.length > 0) {
+        var topics = [];
+        for (var i = 0; i < topicElements.length; i++) {
+          var text = topicElements[i].innerText.trim();
+          if (text.length > 0 && text.length < 50 && topics.indexOf(text) === -1) {
+            topics.push(text);
+          }
+        }
+        data.topics = topics;
+      }
+    }
+
+    // Alternative topic extraction - look for topic pills
     if (data.topics.length === 0) {
       var altTopicElements = document.querySelectorAll('.problemPage_tags__PIjp2 a, .tag__zcXM3');
       if (altTopicElements.length > 0) {
@@ -98,9 +129,17 @@
       }
     }
 
+    // Extract Company Tags from GFG accordion
+    var companyTags = getGfgAccordionTags("Company Tags");
+    if (companyTags.length > 0) {
+      data.companyTags = companyTags;
+    }
+
     // Check if problem is solved on GFG
-    var solvedIndicator = document.querySelector('.problems_solved_status__3TZQS') ||
+    var solvedIndicator = document.querySelector('.solved-status') ||
+                          document.querySelector('.completed-badge') ||
                           document.querySelector('[class*="solved"]') ||
+                          document.querySelector('.problems_solved_status__3TZQS') ||
                           document.querySelector('.solved-badge');
 
     if (solvedIndicator) {
@@ -119,26 +158,11 @@
       }
     }
 
-    // Generate a pseudo number from problem name hash (GFG doesn't have numbers)
-    if (data.name && !data.number) {
-      data.number = 'GFG-' + hashCode(data.name);
-    }
+    // GFG doesn't have question numbers, so we leave it null
+    data.number = null;
 
     Codex.utils.log('GFG Extracted data:', data);
     return data;
-  }
-
-  /**
-   * Simple hash function for generating pseudo IDs
-   */
-  function hashCode(str) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-      var char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash).toString().substring(0, 6);
   }
 
   /**
