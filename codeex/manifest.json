@@ -9,7 +9,8 @@
     "storage"
   ],
   "host_permissions": [
-    "https://cp.saksin.online/*"
+    "https://cp.saksin.online/*",
+    "https://cpbackend.saksin.online/*"
   ],
   "action": {
     "default_popup": "popup.html",

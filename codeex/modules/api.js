@@ -48,6 +48,11 @@
         bookmarked: false
       };
 
+      // Add companyTags if available (for InterviewBit and other platforms)
+      if (problemData.companyTags !== undefined && problemData.companyTags.length > 0) {
+        payload.companyTags = problemData.companyTags;
+      }
+
       const response = await fetch(`${API_BASE_URL}/quests/upsert`, {
         method: 'POST',
         headers: {

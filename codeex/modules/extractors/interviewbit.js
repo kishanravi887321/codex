@@ -21,12 +21,13 @@
       solved: false,
       difficulty: null,
       platform: 'interviewbit',
+      companyTags: [],
       timestamp: new Date().toISOString()
     };
 
-    // Extract problem name from InterviewBit
-    // InterviewBit problem titles are usually in h1 or specific classes
-    var titleElement = document.querySelector('.problem-title') ||
+    // Extract problem name from InterviewBit using specific selectors
+    var titleElement = document.querySelector('h1.p-tile__title') ||
+                       document.querySelector('.problem-title') ||
                        document.querySelector('h1.heading') ||
                        document.querySelector('.problem-name-container h1') ||
                        document.querySelector('.problem-header h1') ||
@@ -55,8 +56,9 @@
       }
     }
 
-    // Extract difficulty from InterviewBit
-    var difficultyElement = document.querySelector('.problem-difficulty') ||
+    // Extract difficulty from InterviewBit using specific selector
+    var difficultyElement = document.querySelector('.p-difficulty-level') ||
+                            document.querySelector('.problem-difficulty') ||
                             document.querySelector('.difficulty-label') ||
                             document.querySelector('[class*="difficulty"]') ||
                             document.querySelector('.level');
@@ -84,24 +86,76 @@
       }
     }
 
-    // Extract topics/tags from InterviewBit
-    var topicElements = document.querySelectorAll('.topic-tag') ||
-                        document.querySelectorAll('.problem-tags a') ||
-                        document.querySelectorAll('.tag-container .tag') ||
-                        document.querySelectorAll('[class*="topic"] a');
+    // Extract company tags from InterviewBit (Asked In companies)
+    var companyLinks = document.querySelectorAll('.p-tile__company-list a.p-similar-question__tag-name');
+    if (companyLinks && companyLinks.length > 0) {
+      var companies = [];
+      companyLinks.forEach(function(a) {
+        try {
+          var url = new URL(a.href);
+          var q = url.searchParams.get('q');
+          if (q && companies.indexOf(q) === -1) {
+            companies.push(q);
+          }
+        } catch (e) {
+          // Fallback: try to get text content
+          var companyName = a.innerText.trim();
+          if (companyName && companies.indexOf(companyName) === -1) {
+            companies.push(companyName);
+          }
+        }
+      });
+      data.companyTags = companies;
+    }
 
-    if (topicElements && topicElements.length > 0) {
+    // Alternative company tag extraction
+    if (data.companyTags.length === 0) {
+      var altCompanyElements = document.querySelectorAll('.company-tag, .asked-in-company, [class*="company"] a');
+      if (altCompanyElements && altCompanyElements.length > 0) {
+        var companies = [];
+        for (var c = 0; c < altCompanyElements.length; c++) {
+          var companyText = altCompanyElements[c].innerText.trim();
+          if (companyText && companyText.length < 50 && companies.indexOf(companyText) === -1) {
+            companies.push(companyText);
+          }
+        }
+        data.companyTags = companies;
+      }
+    }
+
+    // Extract topics from InterviewBit breadcrumb (primary method based on actual page structure)
+    var breadcrumbLinks = document.querySelectorAll('.ib-breadcrumb__item--link, a.ib-breadcrumb__item');
+    if (breadcrumbLinks && breadcrumbLinks.length > 0) {
       var topics = [];
-      for (var i = 0; i < topicElements.length; i++) {
-        var text = topicElements[i].innerText.trim();
-        if (text.length > 0 && text.length < 50 && topics.indexOf(text) === -1) {
+      for (var b = 0; b < breadcrumbLinks.length; b++) {
+        var text = breadcrumbLinks[b].innerText.trim();
+        // Filter out generic items like "Programming", "Home" - keep specific topics like "Linked Lists"
+        if (text.length > 0 && text.length < 50 && 
+            !text.toLowerCase().includes('home') &&
+            !text.toLowerCase().includes('programming') &&
+            topics.indexOf(text) === -1) {
           topics.push(text);
         }
       }
       data.topics = topics;
     }
 
-    // Extract from breadcrumb navigation as alternative
+    // Fallback: Extract topics/tags from other selectors
+    if (data.topics.length === 0) {
+      var topicElements = document.querySelectorAll('.topic-tag, .problem-tags a, .tag-container .tag, [class*="topic"] a');
+      if (topicElements && topicElements.length > 0) {
+        var topics = [];
+        for (var i = 0; i < topicElements.length; i++) {
+          var text = topicElements[i].innerText.trim();
+          if (text.length > 0 && text.length < 50 && topics.indexOf(text) === -1) {
+            topics.push(text);
+          }
+        }
+        data.topics = topics;
+      }
+    }
+
+    // Fallback: Extract from generic breadcrumb navigation
     if (data.topics.length === 0) {
       var categoryElements = document.querySelectorAll('.breadcrumb a, .category-link');
       if (categoryElements.length > 0) {
@@ -121,9 +175,10 @@
     }
 
     // Check if problem is solved on InterviewBit
-    var solvedIndicator = document.querySelector('.problem-solved') ||
-                          document.querySelector('.solved-indicator') ||
+    var solvedIndicator = document.querySelector('.solved-status') ||
+                          document.querySelector('.completed-badge') ||
                           document.querySelector('[class*="solved"]') ||
+                          document.querySelector('.problem-solved') ||
                           document.querySelector('.status-solved');
 
     if (solvedIndicator) {
@@ -149,26 +204,12 @@
       }
     }
 
-    // Generate a pseudo number from problem name hash (InterviewBit doesn't always have numbers)
-    if (data.name && !data.number) {
-      data.number = 'IB-' + hashCode(data.name);
-    }
+    // InterviewBit doesn't have question numbers, so we leave it null
+    // The backend should handle null questNumber for InterviewBit
+    data.number = null;
 
     Codex.utils.log('InterviewBit Extracted data:', data);
     return data;
-  }
-
-  /**
-   * Simple hash function for generating pseudo IDs
-   */
-  function hashCode(str) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-      var char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return Math.abs(hash).toString().substring(0, 6);
   }
 
   /**
