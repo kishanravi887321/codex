@@ -41,7 +41,7 @@ Getting started takes less than 2 minutes!
 
 1. **Clone or Download** this repository
    ```bash
-   git clone https://github.com/yourusername/codex.git
+   https://github.com/kishanravi887321/codex.git
    ```
 
 2. **Open Chrome Extensions**
